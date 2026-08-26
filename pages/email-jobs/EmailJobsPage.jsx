@@ -1,6 +1,7 @@
 import RefreshIcon from "@mui/icons-material/Refresh";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
+import Collapse from "@mui/material/Collapse";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
@@ -121,7 +122,9 @@ export function EmailJobsPage() {
         <Typography variant="h4">Correos de <span className="text-accent">crédito</span></Typography>
       </Box>
 
-      {error ? <div className="alert alert--error">{error}</div> : null}
+      <Collapse in={Boolean(error)} unmountOnExit>
+        <div className="alert alert--error">{error}</div>
+      </Collapse>
 
       <Card className="admin-card--padded">
         <Stack spacing={2.5}>

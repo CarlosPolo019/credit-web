@@ -3,15 +3,17 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import AddCardOutlinedIcon from "@mui/icons-material/AddCardOutlined";
 import ForwardToInboxOutlinedIcon from "@mui/icons-material/ForwardToInboxOutlined";
 import Box from "@mui/material/Box";
+import Fade from "@mui/material/Fade";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext.jsx";
 
 export function DashboardLayout() {
   const { state, logout } = useAuth();
+  const location = useLocation();
 
   return (
     <div className="layout">
@@ -57,7 +59,11 @@ export function DashboardLayout() {
           </Stack>
         </header>
         <main className="layout__main">
-          <Outlet />
+          <Fade key={location.pathname} in appear timeout={220}>
+            <div>
+              <Outlet />
+            </div>
+          </Fade>
         </main>
       </section>
     </div>

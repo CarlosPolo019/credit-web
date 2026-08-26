@@ -48,4 +48,39 @@ export const theme = createTheme({
   shape: {
     borderRadius: 8,
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          transition: "transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease",
+          "&:hover": {
+            transform: "translateY(-1px)",
+          },
+          "&:active": {
+            transform: "translateY(0)",
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          transition: "transform 0.15s ease, background-color 0.2s ease",
+          "&:hover": {
+            transform: "scale(1.08)",
+          },
+          "&:active": {
+            transform: "scale(0.96)",
+          },
+        },
+      },
+    },
+    MuiTableRow: {
+      styleOverrides: {
+        root: {
+          transition: "background-color 0.15s ease",
+        },
+      },
+    },
+  },
 });

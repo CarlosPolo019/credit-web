@@ -6,6 +6,38 @@
   -webkit-font-smoothing: antialiased;
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -36,6 +68,7 @@ a {
   border-radius: 8px;
   background: #ffffff;
   box-shadow: 0 28px 80px rgba(5, 34, 36, 0.12);
+  animation: fade-slide-up 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .login__brand {
@@ -95,6 +128,7 @@ a {
 }
 
 .sidebar__link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -102,12 +136,34 @@ a {
   border-radius: 8px;
   color: #4b5563;
   font-weight: 600;
+  transition: background-color 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
 }
 
 .sidebar__link.active,
 .sidebar__link:hover {
   background: rgba(0, 210, 128, 0.12);
   color: #047857;
+}
+
+.sidebar__link.active {
+  padding-left: 16px;
+}
+
+.sidebar__link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  border-radius: 999px;
+  background: #00d280;
+  transition: height 0.2s ease;
+}
+
+.sidebar__link.active::before {
+  height: 60%;
 }
 
 .layout__content {
@@ -262,6 +318,10 @@ a {
   background: #e5e7eb;
 }
 
+.credit-audit__entry {
+  animation: fade-slide-up 0.32s ease both;
+}
+
 .email-jobs__error {
   display: block;
   color: #dc2626;
@@ -296,6 +356,29 @@ a {
 
 .data-table__progress {
   border-radius: 8px 8px 0 0;
+}
+
+.data-table__body {
+  transition: opacity 0.2s ease;
+}
+
+.data-table__body--loading {
+  opacity: 0.55;
+}
+
+.data-table__row {
+  animation: fade-in 0.3s ease both;
+  transition: opacity 0.22s ease;
+}
+
+.data-table__row td {
+  animation: fade-slide-up 0.28s ease both;
+  animation-delay: var(--row-delay, 0ms);
+}
+
+.data-table__row--removing {
+  opacity: 0;
+  animation: none;
 }
 
 .data-table__sort {

@@ -4,6 +4,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import Box from "@mui/material/Box";
+import Collapse from "@mui/material/Collapse";
 import Dialog from "@mui/material/Dialog";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
@@ -60,6 +61,7 @@ export function CreditsPage() {
   const [editError, setEditError] = useState("");
   const [deletingCredit, setDeletingCredit] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [removingCreditId, setRemovingCreditId] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const latestRequestId = useRef(0);
@@ -150,14 +152,20 @@ export function CreditsPage() {
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await deleteCredit(deletingCredit.id);
+      const deletedId = deletingCredit.id;
+      await deleteCredit(deletedId);
       setSuccess("Crédito eliminado.");
       setDeletingCredit(null);
+      // Let the row fade out in place before the refetch removes it, so the
+      // deletion reads as a change the operator can see rather than a jump-cut.
+      setRemovingCreditId(deletedId);
+      await new Promise((resolve) => window.setTimeout(resolve, 220));
       await loadCredits();
     } catch (err) {
       setError(err.message || "No se pudo eliminar el crédito.");
     } finally {
       setIsDeleting(false);
+      setRemovingCreditId(null);
     }
   };
 
@@ -204,8 +212,12 @@ export function CreditsPage() {
         </Button>
       </Box>
 
-      {error ? <div className="alert alert--error">{error}</div> : null}
-      {success ? <div className="alert alert--success">{success}</div> : null}
+      <Collapse in={Boolean(error)} unmountOnExit>
+        <div className="alert alert--error">{error}</div>
+      </Collapse>
+      <Collapse in={Boolean(success)} unmountOnExit>
+        <div className="alert alert--success">{success}</div>
+      </Collapse>
 
       <Dialog
         open={isFormOpen}
@@ -297,6 +309,7 @@ export function CreditsPage() {
             direction={filters.direction}
             onSortChange={handleSortChange}
             onRowClick={(row) => navigate(`/credits/${row.id}`)}
+            removingRowId={removingCreditId}
           />
         </Stack>
       </Card>

@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import Collapse from "@mui/material/Collapse";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -65,7 +66,9 @@ export function LoginPage() {
           autoComplete="current-password"
           required
         />
-        {error ? <div className="form-error">{error}</div> : null}
+        <Collapse in={Boolean(error)} unmountOnExit>
+          <div className="form-error">{error}</div>
+        </Collapse>
         <Button type="submit" loading={isLoading} loadingText="Ingresando...">
           Ingresar
         </Button>

@@ -4,7 +4,10 @@ import DownloadIcon from "@mui/icons-material/DownloadOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
+import Collapse from "@mui/material/Collapse";
 import Dialog from "@mui/material/Dialog";
+import Fade from "@mui/material/Fade";
+import Grow from "@mui/material/Grow";
 import MuiButton from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -127,7 +130,11 @@ export function CreditDetailPage() {
   };
 
   if (isLoading) {
-    return <Typography className="muted">Cargando crédito...</Typography>;
+    return (
+      <Fade in appear timeout={200}>
+        <Typography className="muted">Cargando crédito...</Typography>
+      </Fade>
+    );
   }
 
   if (error && !credit) {
@@ -181,17 +188,21 @@ export function CreditDetailPage() {
         </Box>
       </Box>
 
-      {error ? <div className="alert alert--error">{error}</div> : null}
+      <Collapse in={Boolean(error)} unmountOnExit>
+        <div className="alert alert--error">{error}</div>
+      </Collapse>
 
-      <Card className="admin-card--padded credit-detail__hero">
-        <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={2}>
-          <Stack spacing={0.5}>
-            <Typography variant="caption" className="muted credit-detail__label">Valor del crédito</Typography>
-            <Typography variant="h3" className="text-accent" fontWeight={800}>{formatCurrency(credit.amount)}</Typography>
+      <Grow in appear timeout={320} style={{ transformOrigin: "top center" }}>
+        <Card className="admin-card--padded credit-detail__hero">
+          <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={2}>
+            <Stack spacing={0.5}>
+              <Typography variant="caption" className="muted credit-detail__label">Valor del crédito</Typography>
+              <Typography variant="h3" className="text-accent" fontWeight={800}>{formatCurrency(credit.amount)}</Typography>
+            </Stack>
+            <PersonChip name={credit.salespersonName} secondaryText="Comercial" size={40} />
           </Stack>
-          <PersonChip name={credit.salespersonName} secondaryText="Comercial" size={40} />
-        </Stack>
-      </Card>
+        </Card>
+      </Grow>
 
       <Grid container spacing={2.5}>
         <Grid size={{ xs: 12, md: 6 }}>

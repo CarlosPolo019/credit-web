@@ -1,6 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import MuiButton from "@mui/material/Button";
+import Collapse from "@mui/material/Collapse";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -154,7 +155,9 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
         </form>
       </DialogContent>
 
-      {error ? <div className="form-error credit-form__error">{error}</div> : null}
+      <Collapse in={Boolean(error)} unmountOnExit>
+        <div className="form-error credit-form__error">{error}</div>
+      </Collapse>
 
       <DialogActions className="credit-form__actions">
         <MuiButton onClick={onCancel} color="inherit">
