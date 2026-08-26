@@ -17,6 +17,8 @@ export function DataTable({
   renderCell,
   isLoading,
   emptyText = "No hay registros para mostrar.",
+  loadingText = "Cargando créditos...",
+  countLabel = "créditos visibles",
   sortBy,
   direction,
   onSortChange,
@@ -25,7 +27,7 @@ export function DataTable({
     return (
       <Box className="table-state">
         <LinearProgress />
-        <Typography variant="body2">Cargando créditos...</Typography>
+        <Typography variant="body2">{loadingText}</Typography>
       </Box>
     );
   }
@@ -79,7 +81,7 @@ export function DataTable({
         </TableBody>
       </Table>
       <Stack className="data-table__footer" direction="row" justifyContent="space-between">
-        <Typography variant="caption">{rows.length} créditos visibles</Typography>
+        <Typography variant="caption">{rows.length} {countLabel}</Typography>
       </Stack>
     </Box>
   );

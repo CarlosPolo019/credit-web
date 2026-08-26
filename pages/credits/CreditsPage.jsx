@@ -1,15 +1,21 @@
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import Box from "@mui/material/Box";
+import Dialog from "@mui/material/Dialog";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
+import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useAuth } from "../../auth/AuthContext.jsx";
 import { formatCurrency, formatDate } from "../../lib/format.js";
 import { Button } from "../../ui/Button.jsx";
 import { Card } from "../../ui/Card.jsx";
 import { DataTable } from "../../ui/DataTable.jsx";
 import { Input } from "../../ui/Input.jsx";
+import { PersonChip } from "../../ui/PersonAvatar.jsx";
 import { creditColumns } from "./credits.columns.js";
 import { createCredit, listCredits } from "./credits.service.js";
 import { CreditForm } from "./CreditForm.jsx";
@@ -33,10 +39,14 @@ function clientDisplayName(row) {
 }
 
 export function CreditsPage() {
+  const { state } = useAuth();
+  const theme = useTheme();
+  const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
   const [filters, setFilters] = useState(defaultFilters);
   const [credits, setCredits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const latestRequestId = useRef(0);
@@ -96,6 +106,7 @@ export function CreditsPage() {
     try {
       await createCredit(payload);
       setSuccess("Crédito registrado. La notificación fue encolada para envío.");
+      setIsFormOpen(false);
       await loadCredits();
       return true;
     } catch (err) {
@@ -107,27 +118,46 @@ export function CreditsPage() {
   };
 
   const renderCell = (row, key) => {
-    if (key === "clientName") return clientDisplayName(row);
+    if (key === "clientName") return <PersonChip name={clientDisplayName(row)} size={28} />;
     if (key === "amount") return formatCurrency(row.amount);
     if (key === "interestRate") return `${row.interestRate}%`;
     if (key === "termMonths") return `${row.termMonths} meses`;
     if (key === "createdAt") return formatDate(row.createdAt);
+    if (key === "salespersonName") return <PersonChip name={row.salespersonName} size={28} />;
     return row[key] ?? "-";
   };
 
   return (
     <Stack spacing={3} className="credits-page">
-      <Box className="page-title">
-        <Typography variant="overline">Créditos</Typography>
-        <Typography variant="h4">Registro y consulta</Typography>
+      <Box className="page-title page-title--with-action">
+        <Box>
+          <Typography variant="overline" className="section-badge">Créditos</Typography>
+          <Typography variant="h4">Registro y <span className="text-accent">consulta</span></Typography>
+        </Box>
+        <Button onClick={() => setIsFormOpen(true)} startIcon={<AddOutlinedIcon />}>
+          Registrar crédito
+        </Button>
       </Box>
 
       {error ? <div className="alert alert--error">{error}</div> : null}
       {success ? <div className="alert alert--success">{success}</div> : null}
 
-      <Card className="admin-card--padded">
-        <CreditForm onSubmit={handleCreate} isSubmitting={isSaving} />
-      </Card>
+      <Dialog
+        open={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        fullWidth
+        maxWidth="sm"
+        fullScreen={isCompact}
+        className="credit-form-dialog"
+      >
+        <CreditForm
+          currentUser={state.user}
+          onSubmit={handleCreate}
+          onCancel={() => setIsFormOpen(false)}
+          isSubmitting={isSaving}
+          error={error}
+        />
+      </Dialog>
 
       <Card className="admin-card--padded">
         <Stack spacing={2.5}>
@@ -141,22 +171,22 @@ export function CreditsPage() {
             </Button>
           </Stack>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={3}>
+            <Grid size={{ xs: 12, md: 3 }}>
               <Input label="Nombre cliente" name="clientName" value={filters.clientName} onChange={handleFilterChange} />
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid size={{ xs: 12, md: 3 }}>
               <Input label="Cédula / ID" name="clientDocument" value={filters.clientDocument} onChange={handleFilterChange} slotProps={{ htmlInput: { inputMode: "numeric", pattern: "[0-9]*" } }} />
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid size={{ xs: 12, md: 3 }}>
               <Input label="Comercial" name="salesperson" value={filters.salesperson} onChange={handleFilterChange} />
             </Grid>
-            <Grid item xs={6} md={1.5}>
+            <Grid size={{ xs: 6, md: 1.5 }}>
               <Input select label="Orden" name="sortBy" value={filters.sortBy} onChange={handleFilterChange}>
                 <MenuItem value="createdAt">Fecha</MenuItem>
                 <MenuItem value="amount">Valor</MenuItem>
               </Input>
             </Grid>
-            <Grid item xs={6} md={1.5}>
+            <Grid size={{ xs: 6, md: 1.5 }}>
               <Input select label="Dirección" name="direction" value={filters.direction} onChange={handleFilterChange}>
                 <MenuItem value="desc">Desc</MenuItem>
                 <MenuItem value="asc">Asc</MenuItem>
