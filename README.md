@@ -152,4 +152,4 @@ flowchart LR
   deploy -->|vercel deploy --prod| prod["fyatest.cmescorcia.com"]
 ```
 
-Para desplegar: GitHub → **Actions** → **Deploy Web** → **Run workflow**. Detalles (secrets, dominio/DNS, `vercel.json`): [`document/deployment.md`](document/deployment.md).
+Para desplegar: GitHub → **Actions** → **Deploy Web** → **Run workflow**, o desde la terminal (requiere `gh` autenticado) con `npm run deploy` (`npm run deploy:status` para ver el resultado). Detalles (secrets, dominio/DNS, `vercel.json`): [`document/deployment.md`](document/deployment.md).
