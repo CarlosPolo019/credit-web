@@ -1,8 +1,11 @@
 name: Deploy Web
 
+# Manual only: trigger from GitHub -> Actions -> Deploy Web -> Run workflow.
+# No automatic deploy on push, and Vercel's own git-triggered deploys are
+# disabled via its "Ignored Build Step" setting — this workflow is the only
+# thing that deploys to production.
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 jobs:
   vercel:

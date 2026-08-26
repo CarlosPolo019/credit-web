@@ -1,13 +1,19 @@
 # Deployment
 
-## Vercel
-El workflow esta preparado para desplegar con Vercel.
+## Vercel — Deploy Manual Desde El Action
+El deploy a produccion **no es automatico**. El workflow `.github/workflows/deploy-web.yml` corre solo con `workflow_dispatch` (boton manual):
+1. GitHub -> pestaña **Actions** -> workflow **Deploy Web** -> **Run workflow** -> rama `main` -> Run.
+2. Corre lint, tests y build primero; si algo falla, no despliega.
+3. Si pasa, hace `vercel deploy --prod` con los secrets del repo.
 
-Variables requeridas:
-- `VITE_API_BASE_URL`
+El deploy automatico de Vercel por push a Git tambien esta apagado (Vercel -> Settings -> Git -> **Ignored Build Step** configurado para saltar siempre `main`). Asi, nada se despliega a produccion sin que alguien lo dispare a mano desde GitHub.
+
+Secrets requeridos en el repo (`gh secret set <NOMBRE> --repo CarlosPolo019/credit-web`):
 - `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
 
-Si el proyecto no esta linkeado, configurar `VERCEL_ORG_ID` y `VERCEL_PROJECT_ID` o ejecutar el link inicial fuera del repo.
+Variable de entorno del build: `VITE_API_BASE_URL` (configurada en el proyecto de Vercel).
 
 ## Dominio Personalizado
 Produccion vive en `https://fyatest.cmescorcia.com` (en vez de la URL larga `*.vercel.app` por defecto). Pasos (manuales, panel de Vercel + Squarespace):
