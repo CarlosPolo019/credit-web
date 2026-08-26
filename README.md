@@ -109,4 +109,4 @@ npm run build
 
 ## Deployment
 
-Vercel is the target platform. Set `VITE_API_BASE_URL` to the deployed Render backend URL and use the provided GitHub Actions workflow with `VERCEL_TOKEN`. Details: [`document/deployment.md`](document/deployment.md).
+Vercel is the target platform, served at the custom domain `https://fyatest.cmescorcia.com` instead of the default `*.vercel.app` URL. Set `VITE_API_BASE_URL` to the deployed Render backend URL and use the provided GitHub Actions workflow with `VERCEL_TOKEN`. Details (including the DNS setup): [`document/deployment.md`](document/deployment.md).
