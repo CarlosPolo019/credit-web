@@ -40,6 +40,20 @@ sequenceDiagram
   Confirm-->>User: éxito, tabla se actualiza
 ```
 
+## Capturas
+
+| Login | Consulta de créditos |
+|---|---|
+| ![Login](docs/screenshots/login.png) | ![Consulta de créditos](docs/screenshots/credits-list.png) |
+
+| Registrar crédito | Confirmación con cuota estimada |
+|---|---|
+| ![Modal de registro](docs/screenshots/credits-register-modal.png) | ![Modal de confirmación](docs/screenshots/credits-confirm-modal.png) |
+
+| Correos de crédito |
+|---|
+| ![Vista de correos](docs/screenshots/email-jobs.png) |
+
 ## Stack
 
 | Layer | Tech |
@@ -109,4 +123,18 @@ npm run build
 
 ## Deployment
 
-Vercel is the target platform, served at the custom domain `https://fyatest.cmescorcia.com` instead of the default `*.vercel.app` URL. Set `VITE_API_BASE_URL` to the deployed Render backend URL and use the provided GitHub Actions workflow with `VERCEL_TOKEN`. Details (including the DNS setup): [`document/deployment.md`](document/deployment.md).
+Production is Vercel, served at the custom domain `https://fyatest.cmescorcia.com` (not the default `*.vercel.app` URL). **Deploys are manual, not automatic on push.**
+
+```mermaid
+flowchart LR
+  dev["git push main"] --> ci["Web CI<br/>(runs on every push)"]
+  dev -.no auto-deploy.-> vercelgit["Vercel Git integration<br/>(disabled via Ignored Build Step)"]
+  operator["Someone clicks<br/>Run workflow"] --> deploy["Deploy Web action<br/>lint + test + build"]
+  deploy -->|vercel deploy --prod| prod["fyatest.cmescorcia.com"]
+```
+
+1. Every push to `main` runs `Web CI` (lint/test/build) automatically — this is just a check, it does not deploy.
+2. To actually ship: GitHub → **Actions** → **Deploy Web** → **Run workflow** (branch `main`). It re-runs lint/test/build and, only if that passes, runs `vercel deploy --prod`.
+3. Vercel's own automatic Git-triggered deploys are turned off (Vercel project → Settings → Git → "Ignored Build Step" configured to always skip). This workflow is the only thing that reaches production.
+
+Required repo secrets (`gh secret set <NAME> --repo CarlosPolo019/credit-web`): `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`. Full details (including the DNS/domain setup and the SPA-rewrite `vercel.json`): [`document/deployment.md`](document/deployment.md).

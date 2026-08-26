@@ -16,10 +16,10 @@ Secrets requeridos en el repo (`gh secret set <NOMBRE> --repo CarlosPolo019/cred
 Variable de entorno del build: `VITE_API_BASE_URL` (configurada en el proyecto de Vercel).
 
 ## Dominio Personalizado
-Produccion vive en `https://fyatest.cmescorcia.com` (en vez de la URL larga `*.vercel.app` por defecto). Pasos (manuales, panel de Vercel + Squarespace):
-1. Vercel: proyecto `credit-web` -> Settings -> Domains -> Add `fyatest.cmescorcia.com`. Vercel muestra el registro CNAME exacto a crear (tipicamente `cname.vercel-dns.com`).
-2. Squarespace (DNS de `cmescorcia.com`): Configuracion de DNS -> Registros personalizados -> Agregar registro: `CNAME`, Host `fyatest`, Data el valor que dio Vercel, TTL 1 hora.
-3. Esperar propagacion (minutos a un par de horas); Vercel verifica y emite SSL automaticamente.
+Produccion vive en `https://fyatest.cmescorcia.com` (en vez de la URL larga `*.vercel.app` por defecto). El dominio `cmescorcia.com` se compro en Squarespace pero **el DNS real lo maneja Cloudflare** (nameservers `*.ns.cloudflare.com`) — los registros que se cargan en el panel de DNS de Squarespace no tienen ningun efecto, hay que cargarlos en Cloudflare. Pasos:
+1. Vercel: proyecto `credit-web` -> Settings -> Domains -> Add `fyatest.cmescorcia.com`. Vercel muestra el registro CNAME exacto a crear (ej. `xxxxxxxxxxxx.vercel-dns-017.com`).
+2. Cloudflare (no Squarespace) -> dominio `cmescorcia.com` -> DNS -> Records -> Add record: `CNAME`, Name `fyatest`, Target el valor que dio Vercel, **Proxy status: DNS only** (nube gris, no naranja — con el proxy de Cloudflare activado Vercel no puede validar el dominio ni emitir SSL).
+3. Esperar propagacion (unos minutos); Vercel verifica y emite SSL automaticamente.
 4. En `credit-backend` (Render), agregar `https://fyatest.cmescorcia.com` a `APP_CORS_ALLOWED_ORIGINS` — sin esto el login/API fallan por CORS aunque el dominio ya resuelva.
 
 ## Build
