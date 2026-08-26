@@ -1,4 +1,3 @@
-import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
@@ -16,7 +15,8 @@ export function LoginPage() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setValues((previous) => ({ ...previous, [name]: value }));
+    const nextValue = name === "username" ? value.replace(/\D/g, "") : value;
+    setValues((previous) => ({ ...previous, [name]: nextValue }));
   };
 
   const handleSubmit = async (event) => {
@@ -37,7 +37,7 @@ export function LoginPage() {
     <section className="login">
       <form className="login__panel" onSubmit={handleSubmit}>
         <Box className="login__brand">
-          <AccountBalanceWalletOutlinedIcon />
+          <img src="/fya-mark.png" alt="Fya" />
           <Typography variant="overline">Fya Social Capital</Typography>
         </Box>
         <Typography variant="h4">Créditos</Typography>
@@ -45,11 +45,12 @@ export function LoginPage() {
           Acceso operativo para registro y consulta.
         </Typography>
         <Input
-          label="Usuario"
+          label="Cédula"
           name="username"
           value={values.username}
           onChange={handleChange}
           autoComplete="username"
+          slotProps={{ htmlInput: { inputMode: "numeric", pattern: "[0-9]*" } }}
           required
         />
         <Input

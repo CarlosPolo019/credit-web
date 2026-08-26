@@ -4,28 +4,36 @@ export const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#073d3b",
-      contrastText: "#f8fffb",
+      main: "#00d280",
+      dark: "#049a5f",
+      light: "#5ee6ae",
+      contrastText: "#052224",
     },
     secondary: {
-      main: "#b78a29",
+      main: "#052224",
+      contrastText: "#ffffff",
+    },
+    success: {
+      main: "#047857",
     },
     error: {
-      main: "#b42318",
+      main: "#dc2626",
     },
     background: {
-      default: "#f4f2eb",
-      paper: "#fffdf7",
+      default: "#ffffff",
+      paper: "#ffffff",
+    },
+    text: {
+      primary: "#052224",
+      secondary: "#6b7280",
     },
   },
   typography: {
-    fontFamily: '"Archivo", "Helvetica Neue", sans-serif',
+    fontFamily: '"Poppins", "Helvetica Neue", sans-serif',
     h4: {
-      fontFamily: '"Source Serif 4", serif',
-      fontWeight: 700,
+      fontWeight: 800,
     },
     h5: {
-      fontFamily: '"Source Serif 4", serif',
       fontWeight: 700,
     },
     h6: {
@@ -34,7 +42,7 @@ export const theme = createTheme({
     overline: {
       letterSpacing: 0,
       fontWeight: 700,
-      color: "#6f6453",
+      color: "#6b7280",
     },
   },
   shape: {
