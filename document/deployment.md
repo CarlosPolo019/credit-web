@@ -13,7 +13,7 @@ Secrets requeridos en el repo (`gh secret set <NOMBRE> --repo CarlosPolo019/cred
 - `VERCEL_ORG_ID`
 - `VERCEL_PROJECT_ID`
 
-Variable de entorno del build: `VITE_API_BASE_URL` (configurada en el proyecto de Vercel).
+Variable de entorno del build: `VITE_API_BASE_URL=https://fyatest-api.cmescorcia.com` (configurada en Vercel -> proyecto -> Settings -> Environment Variables, entorno Production). Vite hornea esta variable en el build, asi que cambiarla requiere un redeploy (Run workflow) para tomar efecto — no alcanza con guardarla en Vercel.
 
 ## Dominio Personalizado
 Produccion vive en `https://fyatest.cmescorcia.com` (en vez de la URL larga `*.vercel.app` por defecto). El dominio `cmescorcia.com` se compro en Squarespace pero **el DNS real lo maneja Cloudflare** (nameservers `*.ns.cloudflare.com`) — los registros que se cargan en el panel de DNS de Squarespace no tienen ningun efecto, hay que cargarlos en Cloudflare. Pasos:
