@@ -1,0 +1,168 @@
+import RefreshIcon from "@mui/icons-material/Refresh";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import MenuItem from "@mui/material/MenuItem";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { formatCurrency, formatDate } from "../../lib/format.js";
+import { Button } from "../../ui/Button.jsx";
+import { Card } from "../../ui/Card.jsx";
+import { DataTable } from "../../ui/DataTable.jsx";
+import { Input } from "../../ui/Input.jsx";
+import { creditColumns } from "./credits.columns.js";
+import { createCredit, listCredits } from "./credits.service.js";
+import { CreditForm } from "./CreditForm.jsx";
+
+const defaultFilters = {
+  clientName: "",
+  clientDocument: "",
+  salesperson: "",
+  sortBy: "createdAt",
+  direction: "desc",
+};
+
+export function CreditsPage() {
+  const [filters, setFilters] = useState(defaultFilters);
+  const [credits, setCredits] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const latestRequestId = useRef(0);
+
+  const loadCredits = useCallback(async (options = {}) => {
+    const requestId = latestRequestId.current + 1;
+    latestRequestId.current = requestId;
+    setIsLoading(true);
+    setError("");
+    try {
+      const response = await listCredits(filters, { signal: options.signal });
+      if (requestId === latestRequestId.current) {
+        setCredits(response.items ?? []);
+      }
+    } catch (err) {
+      if (err.name === "AbortError") return;
+      if (requestId === latestRequestId.current) {
+        setCredits([]);
+        setError(err.message || "No se pudieron cargar los créditos.");
+      }
+    } finally {
+      if (!options.signal?.aborted && requestId === latestRequestId.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [filters]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => {
+      void loadCredits({ signal: controller.signal });
+    }, 250);
+    return () => {
+      controller.abort();
+      window.clearTimeout(timeoutId);
+    };
+  }, [loadCredits]);
+
+  const handleFilterChange = (event) => {
+    const { name, value } = event.target;
+    setFilters((previous) => ({ ...previous, [name]: value }));
+  };
+
+  const handleSortChange = (sortKey) => {
+    setFilters((previous) => ({
+      ...previous,
+      sortBy: sortKey,
+      direction: previous.sortBy === sortKey && previous.direction === "desc" ? "asc" : "desc",
+    }));
+  };
+
+  const handleCreate = async (payload) => {
+    setIsSaving(true);
+    setError("");
+    setSuccess("");
+    try {
+      await createCredit(payload);
+      setSuccess("Crédito registrado. La notificación fue encolada para envío.");
+      await loadCredits();
+      return true;
+    } catch (err) {
+      setError(err.message || "No se pudo registrar el crédito.");
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const renderCell = (row, key) => {
+    if (key === "amount") return formatCurrency(row.amount);
+    if (key === "interestRate") return `${row.interestRate}%`;
+    if (key === "termMonths") return `${row.termMonths} meses`;
+    if (key === "createdAt") return formatDate(row.createdAt);
+    return row[key] ?? "-";
+  };
+
+  return (
+    <Stack spacing={3} className="credits-page">
+      <Box className="page-title">
+        <Typography variant="overline">Créditos</Typography>
+        <Typography variant="h4">Registro y consulta</Typography>
+      </Box>
+
+      {error ? <div className="alert alert--error">{error}</div> : null}
+      {success ? <div className="alert alert--success">{success}</div> : null}
+
+      <Card className="admin-card--padded">
+        <CreditForm onSubmit={handleCreate} isSubmitting={isSaving} />
+      </Card>
+
+      <Card className="admin-card--padded">
+        <Stack spacing={2.5}>
+          <Stack direction={{ xs: "column", md: "row" }} alignItems={{ md: "center" }} justifyContent="space-between" spacing={2}>
+            <Box>
+              <Typography variant="h5">Consultar créditos</Typography>
+              <Typography variant="body2" className="muted">Solo se muestran créditos activos.</Typography>
+            </Box>
+            <Button variant="outlined" onClick={loadCredits} disabled={isLoading} startIcon={<RefreshIcon />}>
+              Actualizar
+            </Button>
+          </Stack>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={3}>
+              <Input label="Nombre cliente" name="clientName" value={filters.clientName} onChange={handleFilterChange} />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Input label="Cédula / ID" name="clientDocument" value={filters.clientDocument} onChange={handleFilterChange} />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Input label="Comercial" name="salesperson" value={filters.salesperson} onChange={handleFilterChange} />
+            </Grid>
+            <Grid item xs={6} md={1.5}>
+              <Input select label="Orden" name="sortBy" value={filters.sortBy} onChange={handleFilterChange}>
+                <MenuItem value="createdAt">Fecha</MenuItem>
+                <MenuItem value="amount">Valor</MenuItem>
+              </Input>
+            </Grid>
+            <Grid item xs={6} md={1.5}>
+              <Input select label="Dirección" name="direction" value={filters.direction} onChange={handleFilterChange}>
+                <MenuItem value="desc">Desc</MenuItem>
+                <MenuItem value="asc">Asc</MenuItem>
+              </Input>
+            </Grid>
+          </Grid>
+          <DataTable
+            columns={creditColumns}
+            rows={credits}
+            getRowId={(row) => row.id}
+            renderCell={renderCell}
+            isLoading={isLoading}
+            sortBy={filters.sortBy}
+            direction={filters.direction}
+            onSortChange={handleSortChange}
+          />
+        </Stack>
+      </Card>
+    </Stack>
+  );
+}
