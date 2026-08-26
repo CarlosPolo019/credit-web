@@ -15,9 +15,10 @@ import { estimateCreditPayment } from "../../lib/creditPayment.js";
 import { formatCurrency, formatDate } from "../../lib/format.js";
 import { Card } from "../../ui/Card.jsx";
 import { PersonChip } from "../../ui/PersonAvatar.jsx";
+import { CreditAuditHistory } from "./CreditAuditHistory.jsx";
 import { CreditForm } from "./CreditForm.jsx";
 import { DeleteCreditDialog } from "./DeleteCreditDialog.jsx";
-import { deleteCredit, getCredit, updateCredit } from "./credits.service.js";
+import { deleteCredit, getCredit, getCreditAudit, updateCredit } from "./credits.service.js";
 import { exportCreditPdf } from "./creditPdf.js";
 
 function clientDisplayName(credit) {
@@ -53,6 +54,8 @@ export function CreditDetailPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [formError, setFormError] = useState("");
+  const [auditEntries, setAuditEntries] = useState([]);
+  const [isAuditLoading, setIsAuditLoading] = useState(true);
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -67,9 +70,22 @@ export function CreditDetailPage() {
     }
   }, [id]);
 
+  const loadAudit = useCallback(async () => {
+    setIsAuditLoading(true);
+    try {
+      const response = await getCreditAudit(id);
+      setAuditEntries(response ?? []);
+    } catch {
+      setAuditEntries([]);
+    } finally {
+      setIsAuditLoading(false);
+    }
+  }, [id]);
+
   useEffect(() => {
     void load();
-  }, [load]);
+    void loadAudit();
+  }, [load, loadAudit]);
 
   const handleUpdate = async (payload) => {
     setIsSaving(true);
@@ -78,6 +94,7 @@ export function CreditDetailPage() {
       const response = await updateCredit(id, payload);
       setCredit(response);
       setIsEditOpen(false);
+      await loadAudit();
       return true;
     } catch (err) {
       setFormError(err.message || "No se pudo guardar el crédito.");
@@ -207,6 +224,14 @@ export function CreditDetailPage() {
               <DetailRow label="Fecha de registro" value={formatDate(credit.createdAt)} />
               <DetailRow label="Última actualización" value={formatDate(credit.updatedAt)} />
               <DetailRow label="ID del crédito" value={credit.id} />
+            </Stack>
+          </Card>
+        </Grid>
+        <Grid size={{ xs: 12 }}>
+          <Card className="admin-card--padded">
+            <Stack spacing={2}>
+              <Typography variant="h6">Historial de cambios</Typography>
+              <CreditAuditHistory entries={auditEntries} isLoading={isAuditLoading} />
             </Stack>
           </Card>
         </Grid>

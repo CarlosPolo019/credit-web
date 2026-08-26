@@ -34,3 +34,7 @@ export async function deleteCredit(id) {
     method: "DELETE",
   });
 }
+
+export async function getCreditAudit(id, options = {}) {
+  return request(`/api/v1/credits/${id}/audit`, { signal: options.signal });
+}

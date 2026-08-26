@@ -256,6 +256,12 @@ a {
   border-color: rgba(0, 210, 128, 0.25);
 }
 
+.credit-audit__divider {
+  display: block;
+  height: 1px;
+  background: #e5e7eb;
+}
+
 .email-jobs__error {
   display: block;
   color: #dc2626;
