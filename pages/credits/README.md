@@ -48,10 +48,10 @@
 - El comercial se toma del usuario autenticado; no se muestra ni es editable en el formulario porque ya esta implicito en la sesion. Solo aparece como referencia en el resumen de `CreditConfirmDialog.jsx`.
 
 ## Detalle, Edicion Y Borrado
-- `CreditDetailPage.jsx` carga el credito con `GET /api/v1/credits/{id}` y muestra cliente, condiciones, cuota/total estimados y fechas.
+- La columna "Opciones" de la tabla (`CreditsPage.jsx`) da acceso directo a ver, editar y eliminar sin salir del listado; el detalle completo vive en `/credits/:id` (`CreditDetailPage.jsx`, `GET /api/v1/credits/{id}`).
 - "Editar" reabre `CreditForm.jsx` en modo `edit` (mismo formulario y confirmacion que el registro, con copy ajustado) y guarda con `PUT /api/v1/credits/{id}`. El comercial original no cambia.
-- "Eliminar" pide confirmacion en un dialogo propio y llama a `DELETE /api/v1/credits/{id}`; al confirmar vuelve al listado.
-- "Exportar PDF" genera un certificado de una pagina con el mismo estilo de marca (verde `#00d280`, tinta `#052224`, logo) via `creditPdf.js` (jsPDF), 100% en el cliente.
+- "Eliminar" pide confirmacion en `DeleteCreditDialog.jsx` (compartido entre listado y detalle) y llama a `DELETE /api/v1/credits/{id}`.
+- "Exportar PDF" (solo en el detalle) genera un certificado de una pagina con el mismo estilo de marca (verde `#00d280`, tinta `#052224`, logo) via `creditPdf.js` (jsPDF), 100% en el cliente.
 
 ## Referencias
 - `document/module-map.md`

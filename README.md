@@ -17,7 +17,7 @@ Credenciales de prueba:
 | `900100002` | `demo12345` | Jennifer Navarro |
 | `900100003` | `demo12345` | Adriana Castellano |
 
-Con cualquiera de esos usuarios podés registrar un crédito (con confirmación y cuota estimada), consultar/filtrar la tabla de créditos, y ver en `/email-jobs` el estado real de las notificaciones. Para correrlo en tu máquina en vez de usar la demo: [Instalación Local](#instalación-local).
+Con cualquiera de esos usuarios podés registrar un crédito (con confirmación y cuota estimada), consultar/filtrar/editar/eliminar la tabla de créditos, entrar al detalle de uno (`/credits/:id`) para exportarlo a PDF, y ver en `/email-jobs` el estado real de las notificaciones. Para correrlo en tu máquina en vez de usar la demo: [Instalación Local](#instalación-local).
 
 ## Sobre Esta Prueba Técnica
 
@@ -67,9 +67,9 @@ sequenceDiagram
 |---|---|
 | ![Modal de registro](docs/screenshots/credits-register-modal.png) | ![Modal de confirmación](docs/screenshots/credits-confirm-modal.png) |
 
-| Correos de crédito |
-|---|
-| ![Vista de correos](docs/screenshots/email-jobs.png) |
+| Detalle de crédito | Correos de crédito |
+|---|---|
+| ![Detalle de crédito](docs/screenshots/credit-detail.png) | ![Vista de correos](docs/screenshots/email-jobs.png) |
 
 ## Stack
 
@@ -78,6 +78,7 @@ sequenceDiagram
 | UI | React 18.3.1, MUI |
 | Build | Vite |
 | Ruteo | React Router |
+| PDF | jsPDF (generado 100% en el cliente, sin backend) |
 | Lenguaje | Solo JavaScript (sin TypeScript, sin paso de compilación de tipos) |
 
 ## Instalación Local
