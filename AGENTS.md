@@ -5,9 +5,9 @@ Guia operativa para agentes que trabajen en `credit-web`.
 ## Mapa Rapido
 - Stack: React 18, Vite, JavaScript, MUI, React Router.
 - SPA sin `src`; la app vive en `main.jsx`, `app/`, `auth/`, `api/`, `lib/`, `ui/`, `pages/`.
-- Rutas: `/login` publica y `/credits` protegida por `ProtectedRoute`.
+- Rutas: `/login` publica; `/credits`, `/credits/:id` y `/email-jobs` protegidas por `ProtectedRoute`.
 - API: solo REST contra Spring Boot mediante `api/client.js`.
-- Sesion: JWT en `localStorage`, limpieza en logout y en `401`.
+- Sesion: JWT en `localStorage` (necesario para que enlaces abiertos en pestaña nueva, como el del correo de crédito, reutilicen la sesión), limpieza en logout y en `401`.
 - Dominio activo: registro y consulta de creditos.
 
 ## Protocolo De Inicio

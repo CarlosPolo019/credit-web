@@ -17,10 +17,11 @@ Preserve the web authentication contract.
 
 ## Invariants
 - Login calls `POST /api/v1/auth/login`.
-- JWT is stored only in `localStorage`.
+- JWT is stored only in `localStorage` (not `sessionStorage`), so a link opened in a new tab — e.g. the "ver detalle completo" button in the credit-registered email — reuses the already-authenticated session.
 - `401` clears session through the auth-expired event.
 - The API client reads the initial token from `auth.storage.js` before React effects run.
-- `/credits` remains protected.
+- `/credits`, `/credits/:id`, and `/email-jobs` remain protected by `ProtectedRoute`.
+- `ProtectedRoute` captures the originally-requested location; `LoginPage` redirects there after a successful login instead of always going to `/credits`.
 
 ## Files
 - `auth/AuthContext.jsx`

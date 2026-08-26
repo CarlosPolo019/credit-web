@@ -20,6 +20,7 @@ La primera carga autenticada lee el token directamente desde `auth.storage.js`; 
 - `GET /api/v1/credits/{id}`
 - `PUT /api/v1/credits/{id}`
 - `DELETE /api/v1/credits/{id}`
+- `GET /api/v1/credits/{id}/audit`
 - `GET /api/v1/email-jobs`
 
 ## Crear Credito
@@ -36,6 +37,9 @@ El formulario envia:
 El backend toma el comercial desde el JWT y la coleccion `users`; el formulario no envia `salespersonName`.
 
 `CreditDetailPage.jsx` reusa el mismo formulario en modo edicion y envia el mismo body a `PUT /api/v1/credits/{id}` para actualizar cliente y condiciones (el comercial original no cambia).
+
+## Historial De Cambios (Auditoria)
+`CreditAuditHistory.jsx` consume `GET /api/v1/credits/{id}/audit` y muestra, por cada edicion o borrado: quien lo hizo, cuando, y para ediciones el detalle campo por campo (`before`/`after`). Se recarga automaticamente despues de guardar una edicion desde el detalle.
 
 ## Query De Creditos
 Campos enviados:

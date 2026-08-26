@@ -10,7 +10,7 @@
 ## Ruta Y Acceso
 - Ruta: `/login`
 - Acceso: publico.
-- Redireccion: si ya existe token, navegar a `/credits`.
+- Redireccion tras login: vuelve a la ruta protegida que el usuario intentaba abrir (capturada por `ProtectedRoute` en `location.state.from`, por ejemplo `/credits/:id` desde el enlace de un correo) o a `/credits` si no habia ninguna.
 
 ## Fuente De Verdad
 - UI: `LoginPage.jsx`
