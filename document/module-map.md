@@ -8,7 +8,7 @@ Inventario canonico de modulos y piezas activas.
 | credits | credits | `/credits` | Creditos | active | `pages/credits/README.md` | `credits-management` | `pages/credits/CreditsPage.jsx` | Entrada protegida con `DashboardLayout`. |
 | credits | credit-detail | `/credits/:id` | Creditos | active | `pages/credits/README.md` | `credits-management` | `pages/credits/CreditDetailPage.jsx` | Detalle, editar, eliminar y exportar PDF de un credito. |
 | email-jobs | email-jobs | `/email-jobs` | Correos | active | `pages/email-jobs/README.md` | `project-overview` | `pages/email-jobs/EmailJobsPage.jsx` | Entrada protegida con `DashboardLayout`; sin skill dedicado aun. |
-| auth | auth-context | provider global | no visible | active | `document/security.md` | `auth-session` | `auth/AuthContext.jsx` | Usa `sessionStorage` key `credit-web-session`. |
+| auth | auth-context | provider global | no visible | active | `document/security.md` | `auth-session` | `auth/AuthContext.jsx` | Usa `localStorage` key `credit-web-session`. |
 | api | api-client | REST client | no visible | active | `document/api.md` | `project-overview` | `api/client.js` | Lee token desde `auth.storage.js` y limpia sesion en `401`. |
 | ui | ui-datatable | tabla creditos | no visible | active | `pages/credits/README.md` | `datatable-credit` | `ui/DataTable.jsx` | Sort accesible por columnas allowlisted. |
 

@@ -25,6 +25,6 @@ flowchart LR
 ## Invariantes
 - No hay acceso directo a Firestore.
 - La autenticacion depende del backend.
-- El token se guarda en `sessionStorage` y se elimina al recibir `401`.
+- El token se guarda en `localStorage` y se elimina al recibir `401`.
 - La app es JavaScript-only.
 

@@ -5,7 +5,7 @@ metadata:
   short-description: credit-web auth and JWT session flow
 triggers:
   - credit-web login
-  - JWT sessionStorage
+  - JWT localStorage
   - ProtectedRoute
 priority: normal
 ---
@@ -17,7 +17,7 @@ Preserve the web authentication contract.
 
 ## Invariants
 - Login calls `POST /api/v1/auth/login`.
-- JWT is stored only in `sessionStorage`.
+- JWT is stored only in `localStorage`.
 - `401` clears session through the auth-expired event.
 - The API client reads the initial token from `auth.storage.js` before React effects run.
 - `/credits` remains protected.

@@ -7,7 +7,7 @@ Guia operativa para agentes que trabajen en `credit-web`.
 - SPA sin `src`; la app vive en `main.jsx`, `app/`, `auth/`, `api/`, `lib/`, `ui/`, `pages/`.
 - Rutas: `/login` publica y `/credits` protegida por `ProtectedRoute`.
 - API: solo REST contra Spring Boot mediante `api/client.js`.
-- Sesion: JWT en `sessionStorage`, limpieza en logout y en `401`.
+- Sesion: JWT en `localStorage`, limpieza en logout y en `401`.
 - Dominio activo: registro y consulta de creditos.
 
 ## Protocolo De Inicio

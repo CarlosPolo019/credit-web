@@ -5,7 +5,7 @@
 
 ## Proposito
 - Permitir ingreso del usuario demo contra el backend.
-- Crear sesion web con JWT en `sessionStorage`.
+- Crear sesion web con JWT en `localStorage`.
 
 ## Ruta Y Acceso
 - Ruta: `/login`
