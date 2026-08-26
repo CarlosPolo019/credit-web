@@ -24,6 +24,11 @@ Guia operativa para agentes que trabajen en `credit-web`.
 4. Revisar que `.env`, `dist/` y `node_modules/` no esten staged.
 5. Crear commit Conventional Commit por checkpoint funcional.
 
+## Politica De Verificacion Visual
+- No instalar Playwright/Chromium ni levantar un navegador headless para verificar cambios de UI: el usuario aporta sus propias capturas de pantalla cuando las necesita.
+- Verificar cambios de UI con `npm run lint`, `npm test`, `npm run build` y, si aplica, pidiendo el `dev` server transforme los modulos tocados (`curl` a cada ruta modificada) para detectar errores de compilacion/import.
+- Si el usuario pide explicitamente una verificacion visual en navegador, ahi si se puede instalar y usar Playwright; no hacerlo por iniciativa propia porque consume tiempo y ancho de banda innecesarios.
+
 ## Protocolo De Subagentes
 Cada subagente debe declarar:
 - `Scope`
