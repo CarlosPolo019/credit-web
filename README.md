@@ -1,8 +1,27 @@
 # Credit Web
 
-React admin panel for the Fya Social Capital credit technical test — operators register/consult credits and monitor email notifications.
+Panel administrativo en React para la prueba técnica de créditos de Fya Social Capital — los operadores registran/consultan créditos y monitorean las notificaciones por correo.
 
-## Sobre esta prueba técnica
+## Demo En Vivo
+
+No hace falta instalar nada para probar la app — **tanto el frontend como el backend ya están desplegados**:
+
+- **Web**: **[https://fyatest.cmescorcia.com](https://fyatest.cmescorcia.com)**
+- **Backend (API)**: `https://fyatest-api.cmescorcia.com` (ya conectado, no hace falta tocarlo)
+
+Credenciales de prueba (usuarios ya sembrados en el backend):
+
+| Cédula | Contraseña | Nombre |
+|---|---|---|
+| `900100001` | `demo12345` | Carlos Escorcia |
+| `900100002` | `demo12345` | Jennifer Navarro |
+| `900100003` | `demo12345` | Adriana Castellano |
+
+Con cualquiera de esos usuarios podés entrar, registrar un crédito (con el paso de confirmación y la cuota estimada) y consultar/filtrar la tabla de créditos ya sembrada. La vista `/email-jobs` muestra el estado real de las notificaciones enviadas por correo.
+
+Si preferís correrlo en tu máquina en vez de usar la demo, seguí la sección [Instalación Local](#instalación-local) más abajo.
+
+## Sobre Esta Prueba Técnica
 
 Este repo es **uno de los tres entregables independientes** de la prueba técnica de créditos:
 
@@ -12,7 +31,7 @@ Este repo es **uno de los tres entregables independientes** de la prueba técnic
 | `credit-web` (este repo) | Panel administrativo (React) para registrar/consultar créditos y monitorear correos | — |
 | `credit-mobile` | App Android (React Native) para el comercial en campo | [`../credit-mobile/README.md`](../credit-mobile/README.md) |
 
-## Architecture
+## Arquitectura
 
 ```mermaid
 flowchart LR
@@ -21,9 +40,9 @@ flowchart LR
   api --> firestore[("Cloud Firestore")]
 ```
 
-`credit-web` never talks to Firestore directly — everything goes through `credit-backend`. `credit-mobile` is the field-operative counterpart to this admin panel.
+`credit-web` nunca habla con Firestore directamente — todo pasa por `credit-backend`. `credit-mobile` es la contraparte para el comercial en campo de este panel administrativo.
 
-### Registrar crédito (con confirmación)
+### Registrar Crédito (Con Confirmación)
 
 ```mermaid
 sequenceDiagram
@@ -56,51 +75,56 @@ sequenceDiagram
 
 ## Stack
 
-| Layer | Tech |
+| Capa | Tecnología |
 |---|---|
 | UI | React 18.3.1, MUI |
 | Build | Vite |
-| Routing | React Router |
-| Language | JavaScript only (no TypeScript, no build step for types) |
+| Ruteo | React Router |
+| Lenguaje | Solo JavaScript (sin TypeScript, sin paso de compilación de tipos) |
 
-## Requisitos Previos
+## Instalación Local
+
+Solo necesario si querés correr la app en tu máquina en vez de usar la [demo en vivo](#demo-en-vivo).
+
+### Requisitos Previos
 
 | Herramienta | Versión | Notas |
 |---|---|---|
-| Node.js | 20+ | Ver `credit-mobile/package.json` `engines` como referencia; sin `engines` propio en este repo |
-| npm | 10+ | Incluido con Node |
-| `credit-backend` corriendo | — | Esta app no funciona standalone; necesita la API en `VITE_API_BASE_URL` |
+| Node.js | 20+ | Ver `credit-mobile/package.json` `engines` como referencia; este repo no declara uno propio |
+| npm | 10+ | Viene incluido con Node |
+| `credit-backend` corriendo | — | Esta app no funciona sola; necesita la API en `VITE_API_BASE_URL` (podés usar la demo desplegada, ver paso 3) |
 
-## Instalación Paso A Paso
+### Paso A Paso
 
-1. **Asegurate de tener `credit-backend` corriendo** (ver su README) — sin la API arriba, el login y todas las vistas fallan.
-2. **Instalá dependencias:**
+1. **Instalá dependencias:**
    ```bash
    cd credit-web
    npm install
    ```
-3. **Configurá el entorno:**
+2. **Configurá el entorno:**
    ```bash
    cp .env.example .env
    ```
-   Por defecto `VITE_API_BASE_URL=http://localhost:8080`, que coincide con el backend local.
+3. **Elegí contra qué backend correr:**
+   - Contra tu propio backend local (ver [`../credit-backend/README.md`](../credit-backend/README.md)): dejá el valor por defecto, `VITE_API_BASE_URL=http://localhost:8080`.
+   - Contra el backend de la demo ya desplegado (sin instalar nada más): poné `VITE_API_BASE_URL=https://fyatest-api.cmescorcia.com` en el `.env`.
 4. **Levantá el dev server:**
    ```bash
    npm run dev
    ```
-   Abre en `http://localhost:5173`.
-5. **Iniciá sesión** con un usuario sembrado del backend (`900100001 / demo12345`) o el usuario demo (`demo / demo12345`).
+   Se abre en `http://localhost:5173`.
+5. **Iniciá sesión** con un usuario sembrado (`900100001 / demo12345`, ver tabla arriba) o el usuario demo genérico (`demo / demo12345`).
 6. **Explorá**: `/credits` para registrar/consultar créditos, `/email-jobs` para ver el estado de las notificaciones.
 
-## Pages
+## Páginas
 
-| Route | Purpose | Doc |
+| Ruta | Qué hace | Doc |
 |---|---|---|
-| `/login` | Public sign-in | [`pages/login/README.md`](pages/login/README.md) |
-| `/credits` | Register credits (with a confirmation + estimated-payment step) and consult active ones | [`pages/credits/README.md`](pages/credits/README.md) |
-| `/email-jobs` | Monitor notification delivery status, see failures inline | [`pages/email-jobs/README.md`](pages/email-jobs/README.md) |
+| `/login` | Ingreso público | [`pages/login/README.md`](pages/login/README.md) |
+| `/credits` | Registrar créditos (con confirmación + cuota estimada) y consultar los activos | [`pages/credits/README.md`](pages/credits/README.md) |
+| `/email-jobs` | Ver el estado de entrega de notificaciones, errores visibles al toque | [`pages/email-jobs/README.md`](pages/email-jobs/README.md) |
 
-## Test & Build
+## Test Y Build
 
 ```bash
 npm run lint
@@ -108,33 +132,33 @@ npm test
 npm run build
 ```
 
-## Documentation Map
+## Mapa De Documentación
 
-| File | Covers |
+| Archivo | Qué cubre |
 |---|---|
-| [`AGENTS.md`](AGENTS.md) | Working rules for agents in this repo |
-| [`document/overview.md`](document/overview.md) | SPA architecture |
-| [`document/module-map.md`](document/module-map.md) | Canonical inventory of views/modules |
-| [`document/api.md`](document/api.md) | REST contract consumed by web |
-| [`document/security.md`](document/security.md) | JWT, storage, protected routes |
-| [`document/testing.md`](document/testing.md) | Test commands and scenarios |
-| [`document/deployment.md`](document/deployment.md) | Vercel and `VITE_API_BASE_URL` |
-| [`document/agents/`](document/agents/) | Agent playbooks and commit conventions |
+| [`AGENTS.md`](AGENTS.md) | Reglas de trabajo para agentes en este repo |
+| [`document/overview.md`](document/overview.md) | Arquitectura de la SPA |
+| [`document/module-map.md`](document/module-map.md) | Inventario canónico de vistas/módulos |
+| [`document/api.md`](document/api.md) | Contrato REST que consume la web |
+| [`document/security.md`](document/security.md) | JWT, storage, rutas protegidas |
+| [`document/testing.md`](document/testing.md) | Comandos y escenarios de prueba |
+| [`document/deployment.md`](document/deployment.md) | Vercel, dominio propio y `VITE_API_BASE_URL` |
+| [`document/agents/`](document/agents/) | Playbooks de agentes y convenciones de commit |
 
-## Deployment
+## Deploy
 
-Production is Vercel, served at the custom domain `https://fyatest.cmescorcia.com` (not the default `*.vercel.app` URL). **Deploys are manual, not automatic on push.**
+Producción corre en Vercel, servida en el dominio propio `https://fyatest.cmescorcia.com` (no la URL larga por defecto `*.vercel.app`). **El deploy es manual, no automático en cada push.**
 
 ```mermaid
 flowchart LR
-  dev["git push main"] --> ci["Web CI<br/>(runs on every push)"]
-  dev -.no auto-deploy.-> vercelgit["Vercel Git integration<br/>(disabled via Ignored Build Step)"]
-  operator["Someone clicks<br/>Run workflow"] --> deploy["Deploy Web action<br/>lint + test + build"]
+  dev["git push main"] --> ci["Web CI<br/>(corre en cada push)"]
+  dev -.sin auto-deploy.-> vercelgit["Integración Git de Vercel<br/>(apagada vía Ignored Build Step)"]
+  operator["Alguien hace click en<br/>Run workflow"] --> deploy["Action Deploy Web<br/>lint + test + build"]
   deploy -->|vercel deploy --prod| prod["fyatest.cmescorcia.com"]
 ```
 
-1. Every push to `main` runs `Web CI` (lint/test/build) automatically — this is just a check, it does not deploy.
-2. To actually ship: GitHub → **Actions** → **Deploy Web** → **Run workflow** (branch `main`). It re-runs lint/test/build and, only if that passes, runs `vercel deploy --prod`.
-3. Vercel's own automatic Git-triggered deploys are turned off (Vercel project → Settings → Git → "Ignored Build Step" configured to always skip). This workflow is the only thing that reaches production.
+1. Cada push a `main` corre `Web CI` (lint/test/build) automáticamente — es solo una validación, no despliega nada.
+2. Para desplegar de verdad: GitHub → **Actions** → **Deploy Web** → **Run workflow** (rama `main`). Vuelve a correr lint/test/build y, solo si pasa, ejecuta `vercel deploy --prod`.
+3. El auto-deploy nativo de Vercel por push a Git está apagado (proyecto de Vercel → Settings → Git → "Ignored Build Step" configurado para saltar siempre). Este workflow es lo único que llega a producción.
 
-Required repo secrets (`gh secret set <NAME> --repo CarlosPolo019/credit-web`): `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`. Full details (including the DNS/domain setup and the SPA-rewrite `vercel.json`): [`document/deployment.md`](document/deployment.md).
+Secrets requeridos en el repo (`gh secret set <NOMBRE> --repo CarlosPolo019/credit-web`): `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`. Detalles completos (incluyendo la configuración del dominio/DNS y el rewrite de SPA en `vercel.json`): [`document/deployment.md`](document/deployment.md).
