@@ -17,6 +17,7 @@ La primera carga autenticada lee el token directamente desde `auth.storage.js`; 
 - `POST /api/v1/auth/login`
 - `POST /api/v1/credits`
 - `GET /api/v1/credits`
+- `GET /api/v1/email-jobs`
 
 ## Crear Credito
 El formulario envia:
@@ -28,7 +29,8 @@ El formulario envia:
 - `amount`
 - `interestRate`
 - `termMonths`
-- `salespersonName`
+
+El backend toma el comercial desde el JWT y la coleccion `users`; el formulario no envia `salespersonName`.
 
 ## Query De Creditos
 Campos enviados:
@@ -40,3 +42,12 @@ Campos enviados:
 
 El backend aplica la fecha oficial, filtros normalizados y exclusiones de inactivos.
 La vista de creditos usa debounce, `AbortController` y request id para evitar que respuestas antiguas pisen resultados recientes.
+
+## Query De Email Jobs
+Campos enviados:
+- `status`: `PENDING`, `PROCESSING`, `SENT`, `RETRY`, `FAILED` o vacio.
+- `search`: coincidencia parcial en cliente o destinatario.
+- `sortBy`: `createdAt` (default) o `status`.
+- `direction`: `asc` o `desc`.
+
+La vista de email jobs usa el mismo patron de debounce, `AbortController` y request id que la de creditos.

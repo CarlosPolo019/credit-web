@@ -1,6 +1,7 @@
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import AddCardOutlinedIcon from "@mui/icons-material/AddCardOutlined";
+import ForwardToInboxOutlinedIcon from "@mui/icons-material/ForwardToInboxOutlined";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
@@ -16,7 +17,9 @@ export function DashboardLayout() {
     <div className="layout">
       <aside className="sidebar">
         <Box className="sidebar__brand">
-          <span className="sidebar__mark">Fy</span>
+          <span className="sidebar__mark">
+            <img src="/fya-mark.png" alt="Fya" />
+          </span>
           <Box>
             <Typography variant="overline">Fya Social Capital</Typography>
             <Typography variant="h6">Créditos</Typography>
@@ -27,6 +30,10 @@ export function DashboardLayout() {
             <AddCardOutlinedIcon fontSize="small" />
             Créditos
           </NavLink>
+          <NavLink to="/email-jobs" className="sidebar__link">
+            <ForwardToInboxOutlinedIcon fontSize="small" />
+            Correos
+          </NavLink>
         </nav>
       </aside>
       <section className="layout__content">
@@ -34,8 +41,8 @@ export function DashboardLayout() {
           <Stack direction="row" spacing={1.25} alignItems="center">
             <AccountBalanceWalletOutlinedIcon color="primary" />
             <Box>
-              <Typography variant="overline">Panel operativo</Typography>
-              <Typography variant="h6">Registro y consulta de créditos</Typography>
+              <Typography variant="overline" className="section-badge">Panel operativo</Typography>
+              <Typography variant="h6">Registro y consulta de <span className="text-accent">créditos</span></Typography>
             </Box>
           </Stack>
           <Stack direction="row" spacing={1.25} alignItems="center">
