@@ -7,7 +7,10 @@ import { Button } from "../../ui/Button.jsx";
 import { Input } from "../../ui/Input.jsx";
 
 const initialValues = {
-  clientName: "",
+  clientFirstName: "",
+  clientSecondName: "",
+  clientFirstSurname: "",
+  clientSecondSurname: "",
   clientDocument: "",
   amount: "",
   interestRate: "2",
@@ -21,7 +24,8 @@ export function CreditForm({ onSubmit, isSubmitting }) {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setValues((previous) => ({ ...previous, [name]: value }));
+    const nextValue = name === "clientDocument" ? value.replace(/\D/g, "") : value;
+    setValues((previous) => ({ ...previous, [name]: nextValue }));
     setErrors((previous) => ({ ...previous, [name]: "" }));
   };
 
@@ -44,13 +48,22 @@ export function CreditForm({ onSubmit, isSubmitting }) {
       <Stack spacing={2.5}>
         <Typography variant="h5">Registrar crédito</Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Input label="Nombre del cliente" name="clientName" value={values.clientName} onChange={handleChange} error={Boolean(errors.clientName)} helperText={errors.clientName} required />
+          <Grid item xs={12} sm={6} md={3}>
+            <Input label="Primer nombre" name="clientFirstName" value={values.clientFirstName} onChange={handleChange} error={Boolean(errors.clientFirstName)} helperText={errors.clientFirstName} required />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Input label="Segundo nombre" name="clientSecondName" value={values.clientSecondName} onChange={handleChange} error={Boolean(errors.clientSecondName)} helperText={errors.clientSecondName} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Input label="Primer apellido" name="clientFirstSurname" value={values.clientFirstSurname} onChange={handleChange} error={Boolean(errors.clientFirstSurname)} helperText={errors.clientFirstSurname} required />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Input label="Segundo apellido" name="clientSecondSurname" value={values.clientSecondSurname} onChange={handleChange} error={Boolean(errors.clientSecondSurname)} helperText={errors.clientSecondSurname} />
           </Grid>
           <Grid item xs={12} md={6}>
-            <Input label="Cédula o ID" name="clientDocument" value={values.clientDocument} onChange={handleChange} error={Boolean(errors.clientDocument)} helperText={errors.clientDocument} required />
+            <Input label="Cédula o ID" name="clientDocument" value={values.clientDocument} onChange={handleChange} error={Boolean(errors.clientDocument)} helperText={errors.clientDocument} required slotProps={{ htmlInput: { inputMode: "numeric", pattern: "[0-9]*" } }} />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <Input label="Valor del crédito" name="amount" type="number" value={values.amount} onChange={handleChange} error={Boolean(errors.amount)} helperText={errors.amount} required />
           </Grid>
           <Grid item xs={12} md={4}>

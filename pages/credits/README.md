@@ -31,9 +31,13 @@
 - Error para fallas de API.
 - Success al registrar credito.
 
+## Validaciones
+- La cedula o ID del cliente solo acepta digitos.
+- El registro separa primer nombre, segundo nombre, primer apellido y segundo apellido.
+- Primer nombre, primer apellido, cedula, valor, tasa, plazo y comercial son obligatorios.
+
 ## Referencias
 - `document/module-map.md`
 - `document/api.md`
 - `.codex/skills/credits-management/SKILL.md`
 - `.codex/skills/datatable-credit/SKILL.md`
-

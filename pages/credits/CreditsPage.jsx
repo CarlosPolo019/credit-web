@@ -22,6 +22,16 @@ const defaultFilters = {
   direction: "desc",
 };
 
+function clientDisplayName(row) {
+  const derivedName = [
+    row.clientFirstName,
+    row.clientSecondName,
+    row.clientFirstSurname,
+    row.clientSecondSurname,
+  ].filter(Boolean).join(" ");
+  return row.clientName || derivedName || "-";
+}
+
 export function CreditsPage() {
   const [filters, setFilters] = useState(defaultFilters);
   const [credits, setCredits] = useState([]);
@@ -67,7 +77,8 @@ export function CreditsPage() {
 
   const handleFilterChange = (event) => {
     const { name, value } = event.target;
-    setFilters((previous) => ({ ...previous, [name]: value }));
+    const nextValue = name === "clientDocument" ? value.replace(/\D/g, "") : value;
+    setFilters((previous) => ({ ...previous, [name]: nextValue }));
   };
 
   const handleSortChange = (sortKey) => {
@@ -96,6 +107,7 @@ export function CreditsPage() {
   };
 
   const renderCell = (row, key) => {
+    if (key === "clientName") return clientDisplayName(row);
     if (key === "amount") return formatCurrency(row.amount);
     if (key === "interestRate") return `${row.interestRate}%`;
     if (key === "termMonths") return `${row.termMonths} meses`;
@@ -133,7 +145,7 @@ export function CreditsPage() {
               <Input label="Nombre cliente" name="clientName" value={filters.clientName} onChange={handleFilterChange} />
             </Grid>
             <Grid item xs={12} md={3}>
-              <Input label="Cédula / ID" name="clientDocument" value={filters.clientDocument} onChange={handleFilterChange} />
+              <Input label="Cédula / ID" name="clientDocument" value={filters.clientDocument} onChange={handleFilterChange} slotProps={{ htmlInput: { inputMode: "numeric", pattern: "[0-9]*" } }} />
             </Grid>
             <Grid item xs={12} md={3}>
               <Input label="Comercial" name="salesperson" value={filters.salesperson} onChange={handleFilterChange} />

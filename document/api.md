@@ -18,6 +18,18 @@ La primera carga autenticada lee el token directamente desde `auth.storage.js`; 
 - `POST /api/v1/credits`
 - `GET /api/v1/credits`
 
+## Crear Credito
+El formulario envia:
+- `clientFirstName`
+- `clientSecondName`
+- `clientFirstSurname`
+- `clientSecondSurname`
+- `clientDocument`: solo digitos
+- `amount`
+- `interestRate`
+- `termMonths`
+- `salespersonName`
+
 ## Query De Creditos
 Campos enviados:
 - `clientName`
