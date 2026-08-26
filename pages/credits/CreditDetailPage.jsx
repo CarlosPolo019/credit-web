@@ -12,6 +12,8 @@ import MuiButton from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { estimateCreditPayment } from "../../lib/creditPayment.js";
@@ -48,6 +50,8 @@ function DetailRow({ label, value, emphasis }) {
 export function CreditDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
   const [credit, setCredit] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -174,7 +178,7 @@ export function CreditDetailPage() {
             </Stack>
             <Typography variant="h4">{clientDisplayName(credit)}</Typography>
           </Box>
-          <Stack direction="row" spacing={1.5} flexWrap="wrap">
+          <Stack className="page-actions" direction="row" spacing={1.5} flexWrap="wrap">
             <MuiButton variant="outlined" color="inherit" startIcon={<DownloadIcon />} onClick={handleExport} disabled={isExporting}>
               {isExporting ? "Generando..." : "Exportar PDF"}
             </MuiButton>
@@ -218,11 +222,11 @@ export function CreditDetailPage() {
           <Card className="admin-card--padded">
             <Stack spacing={2.5}>
               <Typography variant="h6">Condiciones</Typography>
-              <Stack direction="row" spacing={4}>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={4}>
                 <DetailRow label="Tasa mensual" value={`${credit.interestRate}%`} />
                 <DetailRow label="Plazo" value={`${credit.termMonths} meses`} />
               </Stack>
-              <Stack direction="row" spacing={4}>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={4}>
                 <DetailRow label="Cuota mensual estimada" value={formatCurrency(monthlyPayment)} emphasis />
                 <DetailRow label="Total estimado a pagar" value={formatCurrency(totalToPay)} emphasis />
               </Stack>
@@ -248,7 +252,7 @@ export function CreditDetailPage() {
         </Grid>
       </Grid>
 
-      <Dialog open={isEditOpen} onClose={() => setIsEditOpen(false)} fullWidth maxWidth="sm" className="credit-form-dialog">
+      <Dialog open={isEditOpen} onClose={() => setIsEditOpen(false)} fullWidth maxWidth="sm" fullScreen={isCompact} className="credit-form-dialog">
         <CreditForm
           mode="edit"
           initialCredit={credit}

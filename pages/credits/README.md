@@ -35,6 +35,7 @@
 - Empty cuando no hay registros.
 - Error para fallas de API (se muestra en la pagina y, si el modal de registro esta abierto, tambien dentro del modal).
 - Success al registrar credito.
+- En mobile, el listado reutiliza la misma fuente de datos pero presenta cada fila como tarjeta con etiquetas por campo y controles de ordenamiento visibles arriba de las tarjetas.
 
 ## Confirmacion De Registro
 - Al enviar el formulario no se llama a la API directamente: se valida y se abre `CreditConfirmDialog.jsx` con un resumen (cliente, cedula, comercial, valor, tasa, plazo) y una cuota/total estimados (`lib/creditPayment.js`, amortizacion francesa con tasa mensual).
@@ -53,6 +54,10 @@
 - "Eliminar" pide confirmacion en `DeleteCreditDialog.jsx` (compartido entre listado y detalle) y llama a `DELETE /api/v1/credits/{id}`.
 - "Exportar PDF" (solo en el detalle) genera un certificado de una pagina con el mismo estilo de marca (verde `#00d280`, tinta `#052224`, logo) via `creditPdf.js` (jsPDF), 100% en el cliente.
 - El detalle tambien muestra "Historial de cambios" (`CreditAuditHistory.jsx`, `GET /api/v1/credits/{id}/audit`): quien edito o elimino el credito, cuando, y que campos cambiaron (antes/despues). Se recarga despues de cada edicion.
+- Los dialogos de crear/editar pasan a pantalla completa en telefonos para evitar campos comprimidos; en escritorio conservan el modal centrado.
+
+## Avatares
+- `ui/PersonAvatar.jsx` muestra fotos locales para Adriana Castellano, Carlos Escorcia y Jennifer Navarro; cualquier otro nombre conserva iniciales con color estable.
 
 ## Referencias
 - `document/module-map.md`

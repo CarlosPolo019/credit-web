@@ -29,6 +29,8 @@ export function DataTable({
   onRowClick,
   removingRowId,
 }) {
+  const sortableColumns = onSortChange ? columns.filter((column) => column.sortKey) : [];
+
   if (isLoading && rows.length === 0) {
     return (
       <Fade in appear timeout={200}>
@@ -53,7 +55,28 @@ export function DataTable({
   return (
     <Box className="data-table">
       {isLoading ? <LinearProgress className="data-table__progress" /> : null}
-      <Table size="small">
+      {sortableColumns.length ? (
+        <Stack className="data-table__mobile-sort" direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+          <Typography variant="caption" className="muted">Ordenar por</Typography>
+          {sortableColumns.map((column) => {
+            const active = sortBy === column.sortKey;
+            return (
+              <button
+                key={column.key}
+                aria-label={`Ordenar por ${column.label}${active ? `, dirección actual ${direction}` : ""}`}
+                className={`data-table__mobile-sort-button${active ? " data-table__mobile-sort-button--active" : ""}`}
+                type="button"
+                onClick={() => onSortChange(column.sortKey)}
+              >
+                {column.label}
+                {active && direction === "asc" ? <ArrowUpwardIcon /> : null}
+                {active && direction === "desc" ? <ArrowDownwardIcon /> : null}
+              </button>
+            );
+          })}
+        </Stack>
+      ) : null}
+      <Table size="small" className="data-table__table">
         <TableHead>
           <TableRow>
             {columns.map((column) => {
@@ -94,7 +117,13 @@ export function DataTable({
                 sx={onRowClick ? { cursor: "pointer" } : undefined}
               >
                 {columns.map((column) => (
-                  <TableCell key={column.key}>{renderCell(row, column.key)}</TableCell>
+                  <TableCell
+                    key={column.key}
+                    className={`data-table__cell data-table__cell--${column.key}`}
+                    data-label={column.label}
+                  >
+                    {renderCell(row, column.key)}
+                  </TableCell>
                 ))}
               </TableRow>
             );

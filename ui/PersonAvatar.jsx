@@ -9,6 +9,21 @@ const PALETTE = [
   { bg: "#047857", color: "#ffffff" },
 ];
 
+const PERSON_IMAGES = {
+  "adriana castellano": "/people/adriana-castellano.jpg",
+  "carlos escorcia": "/people/carlos-escorcia.jpg",
+  "jennifer navarro": "/people/jennifer-navarro.jpg",
+};
+
+function normalizeName(name) {
+  return String(name ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
 function initials(name) {
   const parts = String(name ?? "").trim().split(/\s+/).filter(Boolean);
   if (!parts.length) return "?";
@@ -24,10 +39,17 @@ function swatchFor(name) {
   return PALETTE[hash];
 }
 
+function imageFor(name) {
+  return PERSON_IMAGES[normalizeName(name)];
+}
+
 export function PersonAvatar({ name, size = 32 }) {
   const swatch = swatchFor(name);
+  const imageSrc = imageFor(name);
   return (
     <MuiAvatar
+      alt={name || "Persona"}
+      src={imageSrc}
       sx={{ width: size, height: size, bgcolor: swatch.bg, color: swatch.color, fontSize: size * 0.4, fontWeight: 700 }}
     >
       {initials(name)}

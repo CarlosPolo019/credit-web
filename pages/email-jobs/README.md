@@ -28,11 +28,16 @@
 - Loading en consulta.
 - Empty cuando no hay correos para los filtros aplicados.
 - Error para fallas de API.
+- En mobile, la tabla se presenta como tarjetas con etiquetas por campo y mantiene los controles de ordenamiento disponibles arriba del listado.
 
 ## Presentacion De Errores
 - Columna "Estado" muestra un `Chip` coloreado (verde `SENT`, ambar `RETRY`, rojo `FAILED`, neutro `PENDING`/`PROCESSING`).
 - Cuando el estado es `FAILED` o `RETRY` y hay `lastError`, el mensaje se muestra en rojo debajo del destinatario en la misma fila (con `Tooltip` si esta truncado) — sin clicks ni modal adicional.
+- En mobile, el error largo se deja envolver en varias lineas para que sea legible sin depender del hover del `Tooltip`.
 - `lastError` es un solo string que el backend sobreescribe en cada intento; no hay historial por intento.
+
+## Avatares
+- `ui/PersonAvatar.jsx` muestra fotos locales para Adriana Castellano, Carlos Escorcia y Jennifer Navarro; cualquier otro nombre conserva iniciales con color estable.
 
 ## Filtros Y Orden
 - `status`: uno de `PENDING`, `PROCESSING`, `SENT`, `RETRY`, `FAILED`, o vacio para todos.

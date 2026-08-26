@@ -99,7 +99,17 @@ export function EmailJobsPage() {
           <Typography variant="body2">{row.recipient}</Typography>
           {showError ? (
             <Tooltip title={row.lastError}>
-              <Typography variant="caption" className="email-jobs__error" noWrap sx={{ maxWidth: 260 }}>
+              <Typography
+                variant="caption"
+                className="email-jobs__error"
+                sx={{
+                  maxWidth: { xs: "100%", sm: 260 },
+                  overflow: { sm: "hidden" },
+                  overflowWrap: "anywhere",
+                  textOverflow: { sm: "ellipsis" },
+                  whiteSpace: { xs: "normal", sm: "nowrap" },
+                }}
+              >
                 {row.lastError}
               </Typography>
             </Tooltip>

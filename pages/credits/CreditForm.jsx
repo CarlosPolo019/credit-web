@@ -123,7 +123,7 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
                 <Grid size={12}>
                   <Input label="Valor del crédito" name="amount" type="number" value={values.amount} onChange={handleChange} error={Boolean(errors.amount)} helperText={errors.amount} required />
                 </Grid>
-                <Grid size={{ xs: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Input
                     label="Tasa de interés mensual"
                     name="interestRate"
@@ -136,7 +136,7 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
                     slotProps={{ input: { endAdornment: <InputAdornment position="end">%</InputAdornment> } }}
                   />
                 </Grid>
-                <Grid size={{ xs: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Input
                     label="Plazo"
                     name="termMonths"
