@@ -4,12 +4,12 @@ Panel administrativo en React para la prueba técnica de créditos de Fya Social
 
 ## Demo En Vivo
 
-No hace falta instalar nada para probar la app — **tanto el frontend como el backend ya están desplegados**:
+No hace falta instalar nada para probar la app — frontend y backend ya están desplegados:
 
 - **Web**: **[https://fyatest.cmescorcia.com](https://fyatest.cmescorcia.com)**
-- **Backend (API)**: `https://fyatest-api.cmescorcia.com` (ya conectado, no hace falta tocarlo)
+- **API**: `https://fyatest-api.cmescorcia.com`
 
-Credenciales de prueba (usuarios ya sembrados en el backend):
+Credenciales de prueba:
 
 | Cédula | Contraseña | Nombre |
 |---|---|---|
@@ -17,19 +17,17 @@ Credenciales de prueba (usuarios ya sembrados en el backend):
 | `900100002` | `demo12345` | Jennifer Navarro |
 | `900100003` | `demo12345` | Adriana Castellano |
 
-Con cualquiera de esos usuarios podés entrar, registrar un crédito (con el paso de confirmación y la cuota estimada) y consultar/filtrar la tabla de créditos ya sembrada. La vista `/email-jobs` muestra el estado real de las notificaciones enviadas por correo.
-
-Si preferís correrlo en tu máquina en vez de usar la demo, seguí la sección [Instalación Local](#instalación-local) más abajo.
+Con cualquiera de esos usuarios podés registrar un crédito (con confirmación y cuota estimada), consultar/filtrar la tabla de créditos, y ver en `/email-jobs` el estado real de las notificaciones. Para correrlo en tu máquina en vez de usar la demo: [Instalación Local](#instalación-local).
 
 ## Sobre Esta Prueba Técnica
 
-Este repo es **uno de los tres entregables independientes** de la prueba técnica de créditos:
+Este repo es uno de los tres entregables independientes de la prueba técnica de créditos:
 
 | Repo | Rol | README |
 |---|---|---|
 | `credit-backend` | API REST, Firestore, JWT, worker de correo | [`../credit-backend/README.md`](../credit-backend/README.md) |
-| `credit-web` (este repo) | Panel administrativo (React) para registrar/consultar créditos y monitorear correos | — |
-| `credit-mobile` | App Android (React Native) para el comercial en campo | [`../credit-mobile/README.md`](../credit-mobile/README.md) |
+| `credit-web` (este repo) | Panel administrativo para registrar/consultar créditos y monitorear correos | — |
+| `credit-mobile` | App Android para el comercial en campo | [`../credit-mobile/README.md`](../credit-mobile/README.md) |
 
 ## Arquitectura
 
@@ -88,11 +86,8 @@ Solo necesario si querés correr la app en tu máquina en vez de usar la [demo e
 
 ### Requisitos Previos
 
-| Herramienta | Versión | Notas |
-|---|---|---|
-| Node.js | 20+ | Ver `credit-mobile/package.json` `engines` como referencia; este repo no declara uno propio |
-| npm | 10+ | Viene incluido con Node |
-| `credit-backend` corriendo | — | Esta app no funciona sola; necesita la API en `VITE_API_BASE_URL` (podés usar la demo desplegada, ver paso 3) |
+- Node.js 20+ y npm 10+.
+- Una API disponible en `VITE_API_BASE_URL` — la local (`credit-backend`) o la de la demo (ver paso 3).
 
 ### Paso A Paso
 
@@ -147,18 +142,13 @@ npm run build
 
 ## Deploy
 
-Producción corre en Vercel, servida en el dominio propio `https://fyatest.cmescorcia.com` (no la URL larga por defecto `*.vercel.app`). **El deploy es manual, no automático en cada push.**
+Producción corre en Vercel bajo el dominio propio `https://fyatest.cmescorcia.com`. El deploy es manual: `git push` solo dispara lint/test/build como validación, no despliega nada.
 
 ```mermaid
 flowchart LR
-  dev["git push main"] --> ci["Web CI<br/>(corre en cada push)"]
-  dev -.sin auto-deploy.-> vercelgit["Integración Git de Vercel<br/>(apagada vía Ignored Build Step)"]
-  operator["Alguien hace click en<br/>Run workflow"] --> deploy["Action Deploy Web<br/>lint + test + build"]
+  dev["git push main"] --> ci["Web CI<br/>(valida, no despliega)"]
+  operator["Run workflow<br/>(manual)"] --> deploy["Deploy Web"]
   deploy -->|vercel deploy --prod| prod["fyatest.cmescorcia.com"]
 ```
 
-1. Cada push a `main` corre `Web CI` (lint/test/build) automáticamente — es solo una validación, no despliega nada.
-2. Para desplegar de verdad: GitHub → **Actions** → **Deploy Web** → **Run workflow** (rama `main`). Vuelve a correr lint/test/build y, solo si pasa, ejecuta `vercel deploy --prod`.
-3. El auto-deploy nativo de Vercel por push a Git está apagado (proyecto de Vercel → Settings → Git → "Ignored Build Step" configurado para saltar siempre). Este workflow es lo único que llega a producción.
-
-Secrets requeridos en el repo (`gh secret set <NOMBRE> --repo CarlosPolo019/credit-web`): `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`. Detalles completos (incluyendo la configuración del dominio/DNS y el rewrite de SPA en `vercel.json`): [`document/deployment.md`](document/deployment.md).
+Para desplegar: GitHub → **Actions** → **Deploy Web** → **Run workflow**. Detalles (secrets, dominio/DNS, `vercel.json`): [`document/deployment.md`](document/deployment.md).
