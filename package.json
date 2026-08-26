@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --test lib/*.test.js",
-    "lint": "eslint . --ext .js,.jsx"
+    "lint": "eslint . --ext .js,.jsx",
+    "deploy": "gh workflow run \"Deploy Web\" --repo CarlosPolo019/credit-web --ref main",
+    "deploy:status": "gh run list --repo CarlosPolo019/credit-web --workflow \"Deploy Web\" --limit 5"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
