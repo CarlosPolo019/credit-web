@@ -182,9 +182,32 @@ a {
   backdrop-filter: blur(16px);
 }
 
-.layout__user {
+.layout__account {
+  min-width: 0;
+}
+
+.layout__salesperson {
+  min-width: 0;
+  justify-content: flex-end;
+}
+
+.layout__salesperson > .MuiStack-root {
+  min-width: 0;
+}
+
+.layout__salesperson .MuiTypography-body2 {
+  max-width: 220px;
+  overflow: hidden;
+  color: #052224;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.layout__salesperson .MuiTypography-caption {
   color: #6b7280;
   font-weight: 700;
+  line-height: 1.2;
 }
 
 .layout__logout {
@@ -535,7 +558,7 @@ a {
   .layout__header {
     min-height: auto;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: 1fr;
     align-items: start;
     gap: 12px;
     padding: 12px 16px;
@@ -554,11 +577,20 @@ a {
     line-height: 1.25;
   }
 
-  .layout__user {
-    max-width: 92px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .layout__account {
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid #eef2f2;
+  }
+
+  .layout__salesperson {
+    flex: 1 1 auto;
+    justify-content: flex-start;
+  }
+
+  .layout__salesperson .MuiTypography-body2 {
+    max-width: calc(100vw - 132px);
   }
 
   .layout__main {

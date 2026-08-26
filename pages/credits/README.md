@@ -14,7 +14,9 @@
 - Rutas: `/credits` (listado) y `/credits/:id` (detalle).
 - Acceso: `ProtectedRoute`.
 - Sidebar: layout privado.
-- Cada fila de la tabla navega a `/credits/:id`; el correo de "nuevo credito registrado" tambien enlaza ahi.
+- Cada fila de la tabla navega a `/credits/:id` pasando el credito en `location.state` para pintar el detalle sin repetir `GET /credits/{id}`.
+- La accion "Editar" navega a `/credits/:id?edit=1` con el mismo `location.state` y abre el formulario desde el detalle. Si se entra directo por URL, refresh o enlace de correo, el detalle hace el `GET /credits/{id}` como fallback.
+- El correo de "nuevo credito registrado" tambien enlaza a `/credits/:id`.
 
 ## Fuente De Verdad
 - Vista listado: `CreditsPage.jsx`
@@ -49,8 +51,8 @@
 - El comercial se toma del usuario autenticado; no se muestra ni es editable en el formulario porque ya esta implicito en la sesion. Solo aparece como referencia en el resumen de `CreditConfirmDialog.jsx`.
 
 ## Detalle, Edicion Y Borrado
-- La columna "Opciones" de la tabla (`CreditsPage.jsx`) da acceso directo a ver, editar y eliminar sin salir del listado; el detalle completo vive en `/credits/:id` (`CreditDetailPage.jsx`, `GET /api/v1/credits/{id}`).
-- "Editar" reabre `CreditForm.jsx` en modo `edit` (mismo formulario y confirmacion que el registro, con copy ajustado) y guarda con `PUT /api/v1/credits/{id}`. El comercial original no cambia.
+- La columna "Opciones" de la tabla (`CreditsPage.jsx`) da acceso directo a ver, editar y eliminar. Ver y editar navegan al detalle pasando el registro seleccionado en `location.state`; eliminar se confirma desde el listado.
+- "Editar" abre `CreditForm.jsx` en modo `edit` dentro del detalle (mismo formulario y confirmacion que el registro, con copy ajustado) y guarda con `PUT /api/v1/credits/{id}`. El comercial original no cambia.
 - "Eliminar" pide confirmacion en `DeleteCreditDialog.jsx` (compartido entre listado y detalle) y llama a `DELETE /api/v1/credits/{id}`.
 - "Exportar PDF" (solo en el detalle) genera un certificado de una pagina con el mismo estilo de marca (verde `#00d280`, tinta `#052224`, logo) via `creditPdf.js` (jsPDF), 100% en el cliente.
 - El detalle tambien muestra "Historial de cambios" (`CreditAuditHistory.jsx`, `GET /api/v1/credits/{id}/audit`): quien edito o elimino el credito, cuando, y que campos cambiaron (antes/despues). Se recarga despues de cada edicion.

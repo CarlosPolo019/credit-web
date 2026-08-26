@@ -10,10 +10,12 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext.jsx";
+import { PersonChip } from "../../ui/PersonAvatar.jsx";
 
 export function DashboardLayout() {
   const { state, logout } = useAuth();
   const location = useLocation();
+  const salespersonName = state.user?.fullName || "Usuario";
 
   return (
     <div className="layout">
@@ -47,10 +49,8 @@ export function DashboardLayout() {
               <Typography variant="h6">Registro y consulta de <span className="text-accent">créditos</span></Typography>
             </Box>
           </Stack>
-          <Stack direction="row" spacing={1.25} alignItems="center">
-            <Typography variant="body2" className="layout__user">
-              {state.user?.username ?? "Usuario"}
-            </Typography>
+          <Stack className="layout__account" direction="row" spacing={1.25} alignItems="center">
+            <PersonChip className="layout__salesperson" name={salespersonName} secondaryText="Comercial" size={36} />
             <Tooltip title="Cerrar sesión">
               <IconButton onClick={logout} className="layout__logout" size="small">
                 <LogoutOutlinedIcon fontSize="small" />

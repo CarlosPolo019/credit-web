@@ -24,7 +24,7 @@ import { DataTable } from "../../ui/DataTable.jsx";
 import { Input } from "../../ui/Input.jsx";
 import { PersonChip } from "../../ui/PersonAvatar.jsx";
 import { creditColumns } from "./credits.columns.js";
-import { createCredit, deleteCredit, listCredits, updateCredit } from "./credits.service.js";
+import { createCredit, deleteCredit, listCredits } from "./credits.service.js";
 import { CreditForm } from "./CreditForm.jsx";
 import { DeleteCreditDialog } from "./DeleteCreditDialog.jsx";
 
@@ -56,9 +56,6 @@ export function CreditsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingCredit, setEditingCredit] = useState(null);
-  const [isEditSaving, setIsEditSaving] = useState(false);
-  const [editError, setEditError] = useState("");
   const [deletingCredit, setDeletingCredit] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [removingCreditId, setRemovingCreditId] = useState(null);
@@ -88,6 +85,14 @@ export function CreditsPage() {
       }
     }
   }, [filters]);
+
+  const openCreditDetail = useCallback((credit) => {
+    navigate(`/credits/${credit.id}`, { state: { credit } });
+  }, [navigate]);
+
+  const openCreditEdit = useCallback((credit) => {
+    navigate(`/credits/${credit.id}?edit=1`, { state: { credit } });
+  }, [navigate]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -132,23 +137,6 @@ export function CreditsPage() {
     }
   };
 
-  const handleUpdate = async (payload) => {
-    setIsEditSaving(true);
-    setEditError("");
-    try {
-      await updateCredit(editingCredit.id, payload);
-      setSuccess("Crédito actualizado.");
-      setEditingCredit(null);
-      await loadCredits();
-      return true;
-    } catch (err) {
-      setEditError(err.message || "No se pudo guardar el crédito.");
-      return false;
-    } finally {
-      setIsEditSaving(false);
-    }
-  };
-
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
@@ -180,12 +168,12 @@ export function CreditsPage() {
       return (
         <Stack direction="row" spacing={0.5} onClick={(event) => event.stopPropagation()}>
           <Tooltip title="Ver más">
-            <IconButton size="small" onClick={() => navigate(`/credits/${row.id}`)}>
+            <IconButton size="small" onClick={() => openCreditDetail(row)}>
               <VisibilityOutlinedIcon fontSize="small" />
             </IconButton>
           </Tooltip>
           <Tooltip title="Editar">
-            <IconButton size="small" onClick={() => setEditingCredit(row)}>
+            <IconButton size="small" onClick={() => openCreditEdit(row)}>
               <EditOutlinedIcon fontSize="small" />
             </IconButton>
           </Tooltip>
@@ -234,27 +222,6 @@ export function CreditsPage() {
           isSubmitting={isSaving}
           error={error}
         />
-      </Dialog>
-
-      <Dialog
-        open={Boolean(editingCredit)}
-        onClose={() => setEditingCredit(null)}
-        fullWidth
-        maxWidth="sm"
-        fullScreen={isCompact}
-        className="credit-form-dialog"
-      >
-        {editingCredit ? (
-          <CreditForm
-            mode="edit"
-            initialCredit={editingCredit}
-            currentUser={{ fullName: editingCredit.salespersonName }}
-            onSubmit={handleUpdate}
-            onCancel={() => setEditingCredit(null)}
-            isSubmitting={isEditSaving}
-            error={editError}
-          />
-        ) : null}
       </Dialog>
 
       <DeleteCreditDialog
@@ -308,7 +275,7 @@ export function CreditsPage() {
             sortBy={filters.sortBy}
             direction={filters.direction}
             onSortChange={handleSortChange}
-            onRowClick={(row) => navigate(`/credits/${row.id}`)}
+            onRowClick={openCreditDetail}
             removingRowId={removingCreditId}
           />
         </Stack>

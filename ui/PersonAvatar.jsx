@@ -57,10 +57,10 @@ export function PersonAvatar({ name, size = 32 }) {
   );
 }
 
-export function PersonChip({ name, size = 32, secondaryText }) {
+export function PersonChip({ name, size = 32, secondaryText, className = "" }) {
   if (!name) return "-";
   return (
-    <Stack direction="row" alignItems="center" spacing={1.25}>
+    <Stack className={className} direction="row" alignItems="center" spacing={1.25}>
       <PersonAvatar name={name} size={size} />
       <Stack spacing={0}>
         <Typography variant="body2" fontWeight={600}>{name}</Typography>

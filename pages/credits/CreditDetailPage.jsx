@@ -15,7 +15,7 @@ import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { estimateCreditPayment } from "../../lib/creditPayment.js";
 import { formatCurrency, formatDate } from "../../lib/format.js";
 import { Card } from "../../ui/Card.jsx";
@@ -49,13 +49,18 @@ function DetailRow({ label, value, emphasis }) {
 
 export function CreditDetailPage() {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const theme = useTheme();
   const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
-  const [credit, setCredit] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const stateCredit = location.state?.credit;
+  const hasStateCredit = stateCredit?.id != null && String(stateCredit.id) === String(id);
+  const shouldOpenEdit = searchParams.get("edit") === "1";
+  const [credit, setCredit] = useState(() => (hasStateCredit ? stateCredit : null));
+  const [isLoading, setIsLoading] = useState(() => !hasStateCredit);
   const [error, setError] = useState("");
-  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(() => shouldOpenEdit);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -90,9 +95,36 @@ export function CreditDetailPage() {
   }, [id]);
 
   useEffect(() => {
+    if (hasStateCredit) {
+      setCredit(stateCredit);
+      setIsLoading(false);
+      setError("");
+      return;
+    }
+
     void load();
+  }, [hasStateCredit, load, stateCredit]);
+
+  useEffect(() => {
+    if (shouldOpenEdit) {
+      setIsEditOpen(true);
+    }
+  }, [shouldOpenEdit, id]);
+
+  useEffect(() => {
     void loadAudit();
-  }, [load, loadAudit]);
+  }, [loadAudit]);
+
+  const closeEditDialog = useCallback(() => {
+    setIsEditOpen(false);
+    setFormError("");
+    if (shouldOpenEdit) {
+      navigate(`/credits/${id}`, {
+        replace: true,
+        state: credit ? { credit } : undefined,
+      });
+    }
+  }, [credit, id, navigate, shouldOpenEdit]);
 
   const handleUpdate = async (payload) => {
     setIsSaving(true);
@@ -100,6 +132,7 @@ export function CreditDetailPage() {
     try {
       const response = await updateCredit(id, payload);
       setCredit(response);
+      navigate(`/credits/${id}`, { replace: true, state: { credit: response } });
       setIsEditOpen(false);
       await loadAudit();
       return true;
@@ -252,16 +285,18 @@ export function CreditDetailPage() {
         </Grid>
       </Grid>
 
-      <Dialog open={isEditOpen} onClose={() => setIsEditOpen(false)} fullWidth maxWidth="sm" fullScreen={isCompact} className="credit-form-dialog">
-        <CreditForm
-          mode="edit"
-          initialCredit={credit}
-          currentUser={{ fullName: credit.salespersonName }}
-          onSubmit={handleUpdate}
-          onCancel={() => setIsEditOpen(false)}
-          isSubmitting={isSaving}
-          error={formError}
-        />
+      <Dialog open={isEditOpen} onClose={closeEditDialog} fullWidth maxWidth="sm" fullScreen={isCompact} className="credit-form-dialog">
+        {isEditOpen ? (
+          <CreditForm
+            mode="edit"
+            initialCredit={credit}
+            currentUser={{ fullName: credit.salespersonName }}
+            onSubmit={handleUpdate}
+            onCancel={closeEditDialog}
+            isSubmitting={isSaving}
+            error={formError}
+          />
+        ) : null}
       </Dialog>
 
       <DeleteCreditDialog
