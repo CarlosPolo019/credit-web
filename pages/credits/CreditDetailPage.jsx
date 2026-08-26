@@ -5,9 +5,6 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 import MuiButton from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -16,10 +13,10 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { estimateCreditPayment } from "../../lib/creditPayment.js";
 import { formatCurrency, formatDate } from "../../lib/format.js";
-import { Button } from "../../ui/Button.jsx";
 import { Card } from "../../ui/Card.jsx";
 import { PersonChip } from "../../ui/PersonAvatar.jsx";
 import { CreditForm } from "./CreditForm.jsx";
+import { DeleteCreditDialog } from "./DeleteCreditDialog.jsx";
 import { deleteCredit, getCredit, updateCredit } from "./credits.service.js";
 import { exportCreditPdf } from "./creditPdf.js";
 
@@ -227,27 +224,13 @@ export function CreditDetailPage() {
         />
       </Dialog>
 
-      <Dialog open={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} maxWidth="xs" fullWidth className="credit-form-dialog">
-        <DialogTitle className="credit-form__title">
-          <Stack spacing={0.5} className="credit-form__title-copy">
-            <Typography variant="overline">Eliminar crédito</Typography>
-            <Typography variant="h5">¿Eliminar este crédito?</Typography>
-          </Stack>
-        </DialogTitle>
-        <DialogContent dividers className="credit-form__content">
-          <Typography variant="body2" className="muted">
-            Se eliminará el crédito de <strong>{clientDisplayName(credit)}</strong>. Esta acción no se puede deshacer desde el panel.
-          </Typography>
-        </DialogContent>
-        <DialogActions className="credit-form__actions">
-          <MuiButton onClick={() => setIsDeleteOpen(false)} color="inherit" disabled={isDeleting}>
-            Cancelar
-          </MuiButton>
-          <Button onClick={handleDelete} color="error" loading={isDeleting} loadingText="Eliminando...">
-            Eliminar
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DeleteCreditDialog
+        open={isDeleteOpen}
+        clientName={clientDisplayName(credit)}
+        onCancel={() => setIsDeleteOpen(false)}
+        onConfirm={handleDelete}
+        isDeleting={isDeleting}
+      />
     </Stack>
   );
 }

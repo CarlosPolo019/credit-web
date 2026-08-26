@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext.jsx";
 import { Button } from "../../ui/Button.jsx";
 import { Input } from "../../ui/Input.jsx";
@@ -9,6 +9,7 @@ import { Input } from "../../ui/Input.jsx";
 export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [values, setValues] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +26,9 @@ export function LoginPage() {
     setIsLoading(true);
     try {
       await login(values.username, values.password);
-      navigate("/credits", { replace: true });
+      const from = location.state?.from;
+      const redirectTo = from ? `${from.pathname}${from.search ?? ""}` : "/credits";
+      navigate(redirectTo, { replace: true });
     } catch (err) {
       setError(err.message || "No se pudo iniciar sesión.");
     } finally {

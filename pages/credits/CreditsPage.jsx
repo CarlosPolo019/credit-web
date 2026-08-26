@@ -1,11 +1,16 @@
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import { useTheme } from "@mui/material/styles";
+import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -18,8 +23,9 @@ import { DataTable } from "../../ui/DataTable.jsx";
 import { Input } from "../../ui/Input.jsx";
 import { PersonChip } from "../../ui/PersonAvatar.jsx";
 import { creditColumns } from "./credits.columns.js";
-import { createCredit, listCredits } from "./credits.service.js";
+import { createCredit, deleteCredit, listCredits, updateCredit } from "./credits.service.js";
 import { CreditForm } from "./CreditForm.jsx";
+import { DeleteCreditDialog } from "./DeleteCreditDialog.jsx";
 
 const defaultFilters = {
   clientName: "",
@@ -49,6 +55,11 @@ export function CreditsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingCredit, setEditingCredit] = useState(null);
+  const [isEditSaving, setIsEditSaving] = useState(false);
+  const [editError, setEditError] = useState("");
+  const [deletingCredit, setDeletingCredit] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const latestRequestId = useRef(0);
@@ -119,6 +130,37 @@ export function CreditsPage() {
     }
   };
 
+  const handleUpdate = async (payload) => {
+    setIsEditSaving(true);
+    setEditError("");
+    try {
+      await updateCredit(editingCredit.id, payload);
+      setSuccess("Crédito actualizado.");
+      setEditingCredit(null);
+      await loadCredits();
+      return true;
+    } catch (err) {
+      setEditError(err.message || "No se pudo guardar el crédito.");
+      return false;
+    } finally {
+      setIsEditSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteCredit(deletingCredit.id);
+      setSuccess("Crédito eliminado.");
+      setDeletingCredit(null);
+      await loadCredits();
+    } catch (err) {
+      setError(err.message || "No se pudo eliminar el crédito.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const renderCell = (row, key) => {
     if (key === "clientName") return <PersonChip name={clientDisplayName(row)} size={28} />;
     if (key === "amount") return formatCurrency(row.amount);
@@ -126,6 +168,27 @@ export function CreditsPage() {
     if (key === "termMonths") return `${row.termMonths} meses`;
     if (key === "createdAt") return formatDate(row.createdAt);
     if (key === "salespersonName") return <PersonChip name={row.salespersonName} size={28} />;
+    if (key === "actions") {
+      return (
+        <Stack direction="row" spacing={0.5} onClick={(event) => event.stopPropagation()}>
+          <Tooltip title="Ver más">
+            <IconButton size="small" onClick={() => navigate(`/credits/${row.id}`)}>
+              <VisibilityOutlinedIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Editar">
+            <IconButton size="small" onClick={() => setEditingCredit(row)}>
+              <EditOutlinedIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Eliminar">
+            <IconButton size="small" color="error" onClick={() => setDeletingCredit(row)}>
+              <DeleteOutlineIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      );
+    }
     return row[key] ?? "-";
   };
 
@@ -160,6 +223,35 @@ export function CreditsPage() {
           error={error}
         />
       </Dialog>
+
+      <Dialog
+        open={Boolean(editingCredit)}
+        onClose={() => setEditingCredit(null)}
+        fullWidth
+        maxWidth="sm"
+        fullScreen={isCompact}
+        className="credit-form-dialog"
+      >
+        {editingCredit ? (
+          <CreditForm
+            mode="edit"
+            initialCredit={editingCredit}
+            currentUser={{ fullName: editingCredit.salespersonName }}
+            onSubmit={handleUpdate}
+            onCancel={() => setEditingCredit(null)}
+            isSubmitting={isEditSaving}
+            error={editError}
+          />
+        ) : null}
+      </Dialog>
+
+      <DeleteCreditDialog
+        open={Boolean(deletingCredit)}
+        clientName={deletingCredit ? clientDisplayName(deletingCredit) : ""}
+        onCancel={() => setDeletingCredit(null)}
+        onConfirm={handleDelete}
+        isDeleting={isDeleting}
+      />
 
       <Card className="admin-card--padded">
         <Stack spacing={2.5}>

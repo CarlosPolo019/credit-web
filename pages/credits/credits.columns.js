@@ -6,4 +6,5 @@ export const creditColumns = [
   { key: "termMonths", label: "Plazo" },
   { key: "salespersonName", label: "Comercial" },
   { key: "createdAt", label: "Registro", sortKey: "createdAt" },
+  { key: "actions", label: "Opciones" },
 ];
