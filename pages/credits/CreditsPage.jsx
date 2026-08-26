@@ -9,6 +9,7 @@ import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext.jsx";
 import { formatCurrency, formatDate } from "../../lib/format.js";
 import { Button } from "../../ui/Button.jsx";
@@ -40,6 +41,7 @@ function clientDisplayName(row) {
 
 export function CreditsPage() {
   const { state } = useAuth();
+  const navigate = useNavigate();
   const theme = useTheme();
   const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
   const [filters, setFilters] = useState(defaultFilters);
@@ -202,6 +204,7 @@ export function CreditsPage() {
             sortBy={filters.sortBy}
             direction={filters.direction}
             onSortChange={handleSortChange}
+            onRowClick={(row) => navigate(`/credits/${row.id}`)}
           />
         </Stack>
       </Card>

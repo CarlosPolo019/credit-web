@@ -17,3 +17,20 @@ export async function listCredits(filters, options = {}) {
   params.set("direction", normalizeDirection(filters.direction));
   return request(`/api/v1/credits?${params.toString()}`, { signal: options.signal });
 }
+
+export async function getCredit(id, options = {}) {
+  return request(`/api/v1/credits/${id}`, { signal: options.signal });
+}
+
+export async function updateCredit(id, payload) {
+  return request(`/api/v1/credits/${id}`, {
+    method: "PUT",
+    body: payload,
+  });
+}
+
+export async function deleteCredit(id) {
+  return request(`/api/v1/credits/${id}`, {
+    method: "DELETE",
+  });
+}

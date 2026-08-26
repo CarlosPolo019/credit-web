@@ -22,6 +22,7 @@ export function DataTable({
   sortBy,
   direction,
   onSortChange,
+  onRowClick,
 }) {
   if (isLoading && rows.length === 0) {
     return (
@@ -72,7 +73,12 @@ export function DataTable({
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={getRowId(row)} hover>
+            <TableRow
+              key={getRowId(row)}
+              hover
+              onClick={onRowClick ? () => onRowClick(row) : undefined}
+              sx={onRowClick ? { cursor: "pointer" } : undefined}
+            >
               {columns.map((column) => (
                 <TableCell key={column.key}>{renderCell(row, column.key)}</TableCell>
               ))}

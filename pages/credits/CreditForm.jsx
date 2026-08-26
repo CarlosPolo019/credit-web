@@ -29,8 +29,9 @@ const initialValues = {
 
 const FORM_ID = "credit-create-form";
 
-export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, error }) {
-  const [values, setValues] = useState(initialValues);
+export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, error, mode = "create", initialCredit }) {
+  const isEdit = mode === "edit";
+  const [values, setValues] = useState(() => (isEdit && initialCredit ? { ...initialValues, ...initialCredit } : initialValues));
   const [errors, setErrors] = useState({});
   // Holds the validated payload while the operator reviews the confirmation
   // step; null means "no confirmation pending", not "empty form".
@@ -60,7 +61,7 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
     // entry; on failure the entered values stay so the operator sees the
     // error banner and can retry without retyping everything.
     setPendingCredit(null);
-    if (ok) {
+    if (ok && !isEdit) {
       setValues(initialValues);
       setErrors({});
     }
@@ -70,10 +71,12 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
     <>
       <DialogTitle className="credit-form__title">
         <Stack spacing={0.5} className="credit-form__title-copy">
-          <Typography variant="overline">Nuevo registro</Typography>
-          <Typography variant="h5">Registrar crédito</Typography>
+          <Typography variant="overline">{isEdit ? "Editar crédito" : "Nuevo registro"}</Typography>
+          <Typography variant="h5">{isEdit ? "Editar crédito" : "Registrar crédito"}</Typography>
           <Typography variant="body2" className="muted">
-            Completa los datos del cliente y las condiciones para dejarlo registrado y notificado.
+            {isEdit
+              ? "Ajusta los datos del cliente o las condiciones del crédito."
+              : "Completa los datos del cliente y las condiciones para dejarlo registrado y notificado."}
           </Typography>
         </Stack>
         <IconButton onClick={onCancel} aria-label="Cerrar" className="credit-form__close" size="small">
@@ -158,7 +161,7 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
           Cancelar
         </MuiButton>
         <Button type="submit" form={FORM_ID}>
-          Registrar crédito
+          {isEdit ? "Guardar cambios" : "Registrar crédito"}
         </Button>
       </DialogActions>
 
@@ -169,6 +172,7 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
         onCancel={() => setPendingCredit(null)}
         onConfirm={handleConfirm}
         isSubmitting={isSubmitting}
+        mode={mode}
       />
     </>
   );

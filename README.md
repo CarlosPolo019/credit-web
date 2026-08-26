@@ -117,6 +117,7 @@ Solo necesario si querés correr la app en tu máquina en vez de usar la [demo e
 |---|---|---|
 | `/login` | Ingreso público | [`pages/login/README.md`](pages/login/README.md) |
 | `/credits` | Registrar créditos (con confirmación + cuota estimada) y consultar los activos | [`pages/credits/README.md`](pages/credits/README.md) |
+| `/credits/:id` | Detalle de un crédito: editar, eliminar y exportar a PDF | [`pages/credits/README.md`](pages/credits/README.md) |
 | `/email-jobs` | Ver el estado de entrega de notificaciones, errores visibles al toque | [`pages/email-jobs/README.md`](pages/email-jobs/README.md) |
 
 ## Test Y Build

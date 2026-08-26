@@ -8,15 +8,20 @@
 - Consultar creditos activos.
 - Filtrar por cliente, documento y comercial.
 - Ordenar por fecha o monto.
+- Ver el detalle de un credito, editarlo, eliminarlo y exportarlo a PDF.
 
 ## Ruta Y Acceso
-- Ruta: `/credits`
+- Rutas: `/credits` (listado) y `/credits/:id` (detalle).
 - Acceso: `ProtectedRoute`.
 - Sidebar: layout privado.
+- Cada fila de la tabla navega a `/credits/:id`; el correo de "nuevo credito registrado" tambien enlaza ahi.
 
 ## Fuente De Verdad
-- Vista: `CreditsPage.jsx`
-- Formulario: `CreditForm.jsx`
+- Vista listado: `CreditsPage.jsx`
+- Vista detalle: `CreditDetailPage.jsx`
+- Formulario (crear y editar): `CreditForm.jsx`
+- Confirmacion: `CreditConfirmDialog.jsx`
+- Exportacion PDF: `creditPdf.js` (jsPDF, un solo archivo)
 - Servicio: `credits.service.js`
 - Columnas: `credits.columns.js`
 - Tabla: `ui/DataTable.jsx`
@@ -41,6 +46,12 @@
 - El registro separa primer nombre, segundo nombre, primer apellido y segundo apellido.
 - Primer nombre, primer apellido, cedula, valor, tasa y plazo son obligatorios.
 - El comercial se toma del usuario autenticado; no se muestra ni es editable en el formulario porque ya esta implicito en la sesion. Solo aparece como referencia en el resumen de `CreditConfirmDialog.jsx`.
+
+## Detalle, Edicion Y Borrado
+- `CreditDetailPage.jsx` carga el credito con `GET /api/v1/credits/{id}` y muestra cliente, condiciones, cuota/total estimados y fechas.
+- "Editar" reabre `CreditForm.jsx` en modo `edit` (mismo formulario y confirmacion que el registro, con copy ajustado) y guarda con `PUT /api/v1/credits/{id}`. El comercial original no cambia.
+- "Eliminar" pide confirmacion en un dialogo propio y llama a `DELETE /api/v1/credits/{id}`; al confirmar vuelve al listado.
+- "Exportar PDF" genera un certificado de una pagina con el mismo estilo de marca (verde `#00d280`, tinta `#052224`, logo) via `creditPdf.js` (jsPDF), 100% en el cliente.
 
 ## Referencias
 - `document/module-map.md`

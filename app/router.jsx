@@ -4,6 +4,7 @@ import { DashboardLayout } from "./layouts/DashboardLayout.jsx";
 import { AuthLayout } from "./layouts/AuthLayout.jsx";
 import { LoginPage } from "../pages/login/LoginPage.jsx";
 import { CreditsPage } from "../pages/credits/CreditsPage.jsx";
+import { CreditDetailPage } from "../pages/credits/CreditDetailPage.jsx";
 import { EmailJobsPage } from "../pages/email-jobs/EmailJobsPage.jsx";
 
 export const router = createBrowserRouter([
@@ -21,6 +22,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/credits" replace /> },
       { path: "credits", element: <CreditsPage /> },
+      { path: "credits/:id", element: <CreditDetailPage /> },
       { path: "email-jobs", element: <EmailJobsPage /> },
     ],
   },

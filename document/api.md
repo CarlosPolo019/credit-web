@@ -17,6 +17,9 @@ La primera carga autenticada lee el token directamente desde `auth.storage.js`; 
 - `POST /api/v1/auth/login`
 - `POST /api/v1/credits`
 - `GET /api/v1/credits`
+- `GET /api/v1/credits/{id}`
+- `PUT /api/v1/credits/{id}`
+- `DELETE /api/v1/credits/{id}`
 - `GET /api/v1/email-jobs`
 
 ## Crear Credito
@@ -31,6 +34,8 @@ El formulario envia:
 - `termMonths`
 
 El backend toma el comercial desde el JWT y la coleccion `users`; el formulario no envia `salespersonName`.
+
+`CreditDetailPage.jsx` reusa el mismo formulario en modo edicion y envia el mismo body a `PUT /api/v1/credits/{id}` para actualizar cliente y condiciones (el comercial original no cambia).
 
 ## Query De Creditos
 Campos enviados:

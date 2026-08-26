@@ -26,8 +26,9 @@ function SummaryRow({ label, value, emphasis }) {
  * typo (an extra zero on the amount, the wrong term) gets caught here
  * instead of after the client has already been notified by email.
  */
-export function CreditConfirmDialog({ open, credit, salespersonLabel, onCancel, onConfirm, isSubmitting }) {
+export function CreditConfirmDialog({ open, credit, salespersonLabel, onCancel, onConfirm, isSubmitting, mode = "create" }) {
   if (!credit) return null;
+  const isEdit = mode === "edit";
 
   const fullName = [credit.clientFirstName, credit.clientSecondName, credit.clientFirstSurname, credit.clientSecondSurname]
     .filter(Boolean)
@@ -38,10 +39,12 @@ export function CreditConfirmDialog({ open, credit, salespersonLabel, onCancel, 
     <Dialog open={open} onClose={onCancel} fullWidth maxWidth="xs" className="credit-form-dialog">
       <DialogTitle className="credit-form__title">
         <Stack spacing={0.5} className="credit-form__title-copy">
-          <Typography variant="overline">Confirmar registro</Typography>
+          <Typography variant="overline">{isEdit ? "Confirmar cambios" : "Confirmar registro"}</Typography>
           <Typography variant="h5">¿Todo correcto?</Typography>
           <Typography variant="body2" className="muted">
-            Revisa los datos antes de registrar. Una vez confirmado, se notifica al cliente por correo.
+            {isEdit
+              ? "Revisa los datos antes de guardar los cambios del crédito."
+              : "Revisa los datos antes de registrar. Una vez confirmado, se notifica al cliente por correo."}
           </Typography>
         </Stack>
       </DialogTitle>
@@ -66,8 +69,8 @@ export function CreditConfirmDialog({ open, credit, salespersonLabel, onCancel, 
         <MuiButton onClick={onCancel} color="inherit" disabled={isSubmitting}>
           Revisar datos
         </MuiButton>
-        <Button onClick={onConfirm} loading={isSubmitting} loadingText="Registrando...">
-          Confirmar y registrar
+        <Button onClick={onConfirm} loading={isSubmitting} loadingText={isEdit ? "Guardando..." : "Registrando..."}>
+          {isEdit ? "Confirmar cambios" : "Confirmar y registrar"}
         </Button>
       </DialogActions>
     </Dialog>
