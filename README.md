@@ -33,8 +33,8 @@ Este repo es uno de los tres entregables independientes de la prueba técnica de
 
 ```mermaid
 flowchart LR
-  web["credit-web<br/>React admin"] -->|REST + JWT| api["credit-backend<br/>Spring Boot"]
-  mobile["credit-mobile<br/>React Native"] -->|REST + JWT| api
+  web["credit-web · React admin"] -->|REST + JWT| api["credit-backend · Spring Boot"]
+  mobile["credit-mobile · React Native"] -->|REST + JWT| api
   api --> firestore[("Cloud Firestore")]
 ```
 
@@ -148,8 +148,8 @@ Producción corre en Vercel bajo el dominio propio `https://fyatest.cmescorcia.c
 
 ```mermaid
 flowchart LR
-  dev["git push main"] --> ci["Web CI<br/>(valida, no despliega)"]
-  operator["Run workflow<br/>(manual)"] --> deploy["Deploy Web"]
+  dev["git push main"] --> ci["Web CI (valida, no despliega)"]
+  operator["Run workflow (manual)"] --> deploy["Deploy Web"]
   deploy -->|vercel deploy --prod| prod["fyatest.cmescorcia.com"]
 ```
 
