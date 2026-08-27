@@ -2,6 +2,7 @@ import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalance
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import AddCardOutlinedIcon from "@mui/icons-material/AddCardOutlined";
 import ForwardToInboxOutlinedIcon from "@mui/icons-material/ForwardToInboxOutlined";
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import IconButton from "@mui/material/IconButton";
@@ -16,6 +17,7 @@ export function DashboardLayout() {
   const { state, logout } = useAuth();
   const location = useLocation();
   const salespersonName = state.user?.fullName || "Usuario";
+  const isAdmin = state.user?.role === "ADMIN";
 
   return (
     <div className="layout">
@@ -34,10 +36,18 @@ export function DashboardLayout() {
             <AddCardOutlinedIcon fontSize="small" />
             Créditos
           </NavLink>
-          <NavLink to="/email-jobs" className="sidebar__link">
-            <ForwardToInboxOutlinedIcon fontSize="small" />
-            Correos
-          </NavLink>
+          {isAdmin ? (
+            <>
+              <NavLink to="/email-jobs" className="sidebar__link">
+                <ForwardToInboxOutlinedIcon fontSize="small" />
+                Correos
+              </NavLink>
+              <NavLink to="/clients" className="sidebar__link">
+                <PeopleAltOutlinedIcon fontSize="small" />
+                Clientes
+              </NavLink>
+            </>
+          ) : null}
         </nav>
       </aside>
       <section className="layout__content">

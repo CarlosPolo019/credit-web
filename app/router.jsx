@@ -1,4 +1,5 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
+import { AdminRoute } from "./guards/AdminRoute.jsx";
 import { ProtectedRoute } from "./guards/ProtectedRoute.jsx";
 import { DashboardLayout } from "./layouts/DashboardLayout.jsx";
 import { AuthLayout } from "./layouts/AuthLayout.jsx";
@@ -6,6 +7,7 @@ import { LoginPage } from "../pages/login/LoginPage.jsx";
 import { CreditsPage } from "../pages/credits/CreditsPage.jsx";
 import { CreditDetailPage } from "../pages/credits/CreditDetailPage.jsx";
 import { EmailJobsPage } from "../pages/email-jobs/EmailJobsPage.jsx";
+import { ClientsPage } from "../pages/clients/ClientsPage.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -23,7 +25,8 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="/credits" replace /> },
       { path: "credits", element: <CreditsPage /> },
       { path: "credits/:id", element: <CreditDetailPage /> },
-      { path: "email-jobs", element: <EmailJobsPage /> },
+      { path: "email-jobs", element: <AdminRoute><EmailJobsPage /></AdminRoute> },
+      { path: "clients", element: <AdminRoute><ClientsPage /></AdminRoute> },
     ],
   },
   { path: "*", element: <Navigate to="/credits" replace /> },
