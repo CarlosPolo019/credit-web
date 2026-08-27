@@ -9,11 +9,12 @@
 ## Rutas
 - `/login`: pública.
 - `/credits`, `/credits/:id`: protegidas por `ProtectedRoute`. Al redirigir a `/login` se guarda la ruta original para volver ahí después de autenticar.
-- `/email-jobs`, `/clients`, `/users`: protegidas por `ProtectedRoute` **y** `AdminRoute` (`app/guards/AdminRoute.jsx`) — solo `state.user.role === "ADMIN"`. Cualquier otra cuenta autenticada que entre por URL directa es redirigida a `/credits`, sin mensaje de error (no es un intento de acceso hostil esperado, solo navegación fuera de su alcance).
+- `/email-jobs`, `/clients`, `/users`, `/dashboard`: protegidas por `ProtectedRoute` **y** `AdminRoute` (`app/guards/AdminRoute.jsx`) — solo `state.user.role === "ADMIN"`. Cualquier otra cuenta autenticada que entre por URL directa es redirigida a `/credits`, sin mensaje de error (no es un intento de acceso hostil esperado, solo navegación fuera de su alcance).
 
 ## Roles
 - `state.user.role` viene del backend (`AppUser.role`, viaja en el JWT) — `"ADMIN"` o `"USER"`. Hoy solo la cuenta `900100001` (Carlos Escorcia) es `ADMIN`; el resto (incluyendo cuentas nuevas por auto-registro o por `/users`, salvo que un admin elija `ADMIN` explícitamente) son `USER`.
-- El rol solo restringe Correos, Clientes y Usuarios (oculto en `DashboardLayout`, bloqueado por `AdminRoute`). Crear/editar/eliminar créditos es igual para todas las cuentas — no hay distinción de rol ahí.
+- El rol solo restringe Dashboard, Correos, Clientes y Usuarios (oculto en `DashboardLayout`, bloqueado por `AdminRoute`). Crear/editar/eliminar créditos es igual para todas las cuentas — no hay distinción de rol ahí.
+- `/dashboard` no llama ningún endpoint nuevo: agrega en el cliente los mismos datos que ya devuelven `GET /api/v1/credits` y `GET /api/v1/email-jobs`, protegidos solo por `AdminRoute` en el frontend igual que el resto de esas dos rutas cuando se navegan directamente. No hay dato adicional expuesto que esos dos endpoints no expongan ya.
 - El frontend oculta/redirige por rol, pero **no es el control real**: `/api/v1/email-jobs/**` y `/api/v1/users` (`POST`) exigen `ADMIN` en el backend (`SecurityConfig.hasRole("ADMIN")`, 403 JSON si no) — llamar cualquiera de las dos APIs directo con un token de cuenta `USER` falla igual. `/api/v1/clients` no exige rol en el backend a propósito: lo usa el autocomplete del formulario de créditos, que usan todas las cuentas. `/api/v1/auth/register` sigue siendo público (`permitAll`) y sin cambios — no está relacionado con `/users`.
 
 ## Crear Usuarios De Prueba (`/users`)

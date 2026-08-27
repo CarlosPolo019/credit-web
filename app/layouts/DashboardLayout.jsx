@@ -4,6 +4,7 @@ import AddCardOutlinedIcon from "@mui/icons-material/AddCardOutlined";
 import ForwardToInboxOutlinedIcon from "@mui/icons-material/ForwardToInboxOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import GroupAddOutlinedIcon from "@mui/icons-material/GroupAddOutlined";
+import InsightsOutlinedIcon from "@mui/icons-material/InsightsOutlined";
 import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import IconButton from "@mui/material/IconButton";
@@ -39,6 +40,10 @@ export function DashboardLayout() {
           </NavLink>
           {isAdmin ? (
             <>
+              <NavLink to="/dashboard" className="sidebar__link">
+                <InsightsOutlinedIcon fontSize="small" />
+                Dashboard
+              </NavLink>
               <NavLink to="/email-jobs" className="sidebar__link">
                 <ForwardToInboxOutlinedIcon fontSize="small" />
                 Correos

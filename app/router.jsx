@@ -9,6 +9,7 @@ import { CreditDetailPage } from "../pages/credits/CreditDetailPage.jsx";
 import { EmailJobsPage } from "../pages/email-jobs/EmailJobsPage.jsx";
 import { ClientsPage } from "../pages/clients/ClientsPage.jsx";
 import { UsersPage } from "../pages/users/UsersPage.jsx";
+import { DashboardPage } from "../pages/dashboard/DashboardPage.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
       { path: "email-jobs", element: <AdminRoute><EmailJobsPage /></AdminRoute> },
       { path: "clients", element: <AdminRoute><ClientsPage /></AdminRoute> },
       { path: "users", element: <AdminRoute><UsersPage /></AdminRoute> },
+      { path: "dashboard", element: <AdminRoute><DashboardPage /></AdminRoute> },
     ],
   },
   { path: "*", element: <Navigate to="/credits" replace /> },
