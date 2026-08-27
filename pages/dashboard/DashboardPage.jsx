@@ -1,8 +1,14 @@
+import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
+import EmojiEventsOutlinedIcon from "@mui/icons-material/EmojiEventsOutlined";
+import PercentOutlinedIcon from "@mui/icons-material/PercentOutlined";
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
+import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Collapse from "@mui/material/Collapse";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
+import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -10,11 +16,13 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  Label,
+  LabelList,
   Legend,
   Pie,
   PieChart,
   ResponsiveContainer,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   XAxis,
   YAxis,
 } from "recharts";
@@ -42,6 +50,15 @@ const STATUS_META = {
 };
 const STATUS_ORDER = ["SENT", "FAILED", "RETRY", "PROCESSING", "PENDING"];
 
+// Compact ($99,5 M) for the big headline numbers — the exact value is one
+// hover away via the Tooltip wrapper, so nothing is lost, just decluttered.
+const compactCurrencyFormatter = new Intl.NumberFormat("es-CO", {
+  style: "currency",
+  currency: "COP",
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
 function aggregateCreditsBySalesperson(credits) {
   const counts = new Map();
   for (const credit of credits) {
@@ -68,13 +85,45 @@ function aggregateEmailJobsByStatus(jobs) {
     .filter((entry) => entry.count > 0);
 }
 
+function StatCard({ icon, iconColor, label, value, tooltip, caption }) {
+  return (
+    <Card className="admin-card--padded">
+      <Stack direction="row" spacing={1.75} alignItems="flex-start">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 44,
+            height: 44,
+            borderRadius: "12px",
+            flexShrink: 0,
+            backgroundColor: `${iconColor}1a`,
+            color: iconColor,
+          }}
+        >
+          {icon}
+        </Box>
+        <Stack spacing={0.25} sx={{ minWidth: 0 }}>
+          <Typography variant="overline" className="section-badge">{label}</Typography>
+          <Tooltip title={tooltip ?? ""} placement="top" arrow disableHoverListener={!tooltip}>
+            <Typography variant="h4" noWrap>{value}</Typography>
+          </Tooltip>
+          {caption ? <Typography variant="body2" className="muted">{caption}</Typography> : null}
+        </Stack>
+      </Stack>
+    </Card>
+  );
+}
+
 /**
  * Admin-only aggregate view: per-comercial credit counts, global totals
- * (monto solicitado / ganancia estimada) and an email-status breakdown.
- * Both source lists (`listCredits`, `listEmailJobs`) already return the full
- * active dataset with no server pagination — same assumption ClientsPage,
- * CreditsPage and EmailJobsPage rely on — so every number here is computed
- * client-side from those two fetches, no new backend endpoint.
+ * (monto solicitado / ganancia estimada / tasa promedio) and an email-status
+ * breakdown. Both source lists (`listCredits`, `listEmailJobs`) already
+ * return the full active dataset with no server pagination — same
+ * assumption ClientsPage, CreditsPage and EmailJobsPage rely on — so every
+ * number here is computed client-side from those two fetches, no new
+ * backend endpoint.
  */
 export function DashboardPage() {
   const [credits, setCredits] = useState([]);
@@ -119,6 +168,7 @@ export function DashboardPage() {
 
   const creditsBySalesperson = useMemo(() => aggregateCreditsBySalesperson(credits), [credits]);
   const emailJobsByStatus = useMemo(() => aggregateEmailJobsByStatus(emailJobs), [emailJobs]);
+  const totalEmailJobs = useMemo(() => emailJobs.length, [emailJobs]);
 
   const totalRequestedAmount = useMemo(
     () => credits.reduce((sum, credit) => sum + Number(credit.amount ?? 0), 0),
@@ -131,7 +181,13 @@ export function DashboardPage() {
     ),
     [credits],
   );
+  const averageInterestRate = useMemo(() => {
+    if (credits.length === 0) return 0;
+    const sum = credits.reduce((total, credit) => total + Number(credit.interestRate ?? 0), 0);
+    return sum / credits.length;
+  }, [credits]);
 
+  const topSalesperson = creditsBySalesperson[0] ?? null;
   const chartHeight = Math.max(220, creditsBySalesperson.length * 48);
 
   return (
@@ -158,45 +214,83 @@ export function DashboardPage() {
       ) : (
         <>
           <Grid container spacing={2}>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Card className="admin-card--padded">
-                <Stack spacing={1}>
-                  <Typography variant="overline" className="section-badge">Monto total solicitado</Typography>
-                  <Typography variant="h4">{formatCurrency(totalRequestedAmount)}</Typography>
-                  <Typography variant="body2" className="muted">Suma de `amount` de todos los créditos activos.</Typography>
-                </Stack>
-              </Card>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <StatCard
+                icon={<ReceiptLongOutlinedIcon fontSize="small" />}
+                iconColor="#052224"
+                label="Créditos activos"
+                value={credits.length.toLocaleString("es-CO")}
+                caption="Total de créditos registrados"
+              />
             </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Card className="admin-card--padded">
-                <Stack spacing={1}>
-                  <Typography variant="overline" className="section-badge">Ganancia total estimada</Typography>
-                  <Typography variant="h4">{formatCurrency(totalEstimatedProfit)}</Typography>
-                  <Typography variant="body2" className="muted">
-                    Suma de (total estimado a pagar − monto solicitado) por crédito.
-                  </Typography>
-                </Stack>
-              </Card>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <StatCard
+                icon={<AccountBalanceWalletOutlinedIcon fontSize="small" />}
+                iconColor="#049a5f"
+                label="Monto solicitado"
+                value={compactCurrencyFormatter.format(totalRequestedAmount)}
+                tooltip={formatCurrency(totalRequestedAmount)}
+                caption="Suma de todos los créditos"
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <StatCard
+                icon={<TrendingUpOutlinedIcon fontSize="small" />}
+                iconColor="#00d280"
+                label="Ganancia estimada"
+                value={compactCurrencyFormatter.format(totalEstimatedProfit)}
+                tooltip={formatCurrency(totalEstimatedProfit)}
+                caption="Intereses proyectados"
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <StatCard
+                icon={<PercentOutlinedIcon fontSize="small" />}
+                iconColor="#f59e0b"
+                label="Tasa promedio"
+                value={`${averageInterestRate.toLocaleString("es-CO", { maximumFractionDigits: 2 })}%`}
+                caption="Mensual, entre todos los créditos"
+              />
             </Grid>
           </Grid>
 
           <Card className="admin-card--padded">
             <Stack spacing={2}>
-              <Box>
-                <Typography variant="h5">Créditos por comercial</Typography>
-                <Typography variant="body2" className="muted">Cantidad de créditos activos registrados por cada comercial.</Typography>
-              </Box>
+              <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" spacing={1} alignItems={{ sm: "center" }}>
+                <Box>
+                  <Typography variant="h5">Créditos por comercial</Typography>
+                  <Typography variant="body2" className="muted">Cantidad de créditos activos registrados por cada comercial.</Typography>
+                </Box>
+                {topSalesperson ? (
+                  <Stack
+                    direction="row"
+                    spacing={0.75}
+                    alignItems="center"
+                    sx={{ backgroundColor: "#fef3c7", borderRadius: "999px", px: 1.5, py: 0.5, alignSelf: { xs: "flex-start", sm: "center" } }}
+                  >
+                    <EmojiEventsOutlinedIcon fontSize="small" sx={{ color: "#b45309" }} />
+                    <Typography variant="body2" fontWeight={700} sx={{ color: "#92400e" }}>
+                      Líder: {topSalesperson.name} ({topSalesperson.count})
+                    </Typography>
+                  </Stack>
+                ) : null}
+              </Stack>
               {creditsBySalesperson.length === 0 ? (
                 <Typography variant="body2" className="muted">No hay créditos para mostrar.</Typography>
               ) : (
                 <Box sx={{ width: "100%", height: chartHeight }}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={creditsBySalesperson} layout="vertical" margin={{ left: 24, right: 24 }}>
+                    <BarChart data={creditsBySalesperson} layout="vertical" margin={{ left: 24, right: 40 }}>
                       <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                       <XAxis type="number" allowDecimals={false} />
                       <YAxis type="category" dataKey="name" width={160} />
-                      <Tooltip formatter={(value) => [value, "Créditos"]} />
-                      <Bar dataKey="count" name="Créditos" fill="#00d280" radius={[0, 4, 4, 0]} />
+                      <RechartsTooltip formatter={(value) => [value, "Créditos"]} />
+                      <Bar dataKey="count" name="Créditos" radius={[0, 4, 4, 0]}>
+                        {creditsBySalesperson.map((entry, index) => (
+                          <Cell key={entry.name} fill={index === 0 ? "#049a5f" : "#5ee6ae"} />
+                        ))}
+                        <LabelList dataKey="count" position="right" style={{ fontWeight: 700, fill: "#052224" }} />
+                      </Bar>
                     </BarChart>
                   </ResponsiveContainer>
                 </Box>
@@ -229,8 +323,23 @@ export function DashboardPage() {
                         {emailJobsByStatus.map((entry) => (
                           <Cell key={entry.status} fill={entry.color} />
                         ))}
+                        <Label
+                          content={({ viewBox }) => {
+                            const { cx, cy } = viewBox;
+                            return (
+                              <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
+                                <tspan x={cx} dy="-0.3em" fontSize="28" fontWeight="800" fill="#052224">
+                                  {totalEmailJobs}
+                                </tspan>
+                                <tspan x={cx} dy="1.5em" fontSize="12" fill="#6b7280">
+                                  correo{totalEmailJobs === 1 ? "" : "s"}
+                                </tspan>
+                              </text>
+                            );
+                          }}
+                        />
                       </Pie>
-                      <Tooltip formatter={(value, _name, entry) => [value, entry.payload.label]} />
+                      <RechartsTooltip formatter={(value, _name, entry) => [value, entry.payload.label]} />
                       <Legend />
                     </PieChart>
                   </ResponsiveContainer>
