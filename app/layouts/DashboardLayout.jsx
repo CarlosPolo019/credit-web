@@ -3,6 +3,7 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import AddCardOutlinedIcon from "@mui/icons-material/AddCardOutlined";
 import ForwardToInboxOutlinedIcon from "@mui/icons-material/ForwardToInboxOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
+import GroupAddOutlinedIcon from "@mui/icons-material/GroupAddOutlined";
 import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import IconButton from "@mui/material/IconButton";
@@ -45,6 +46,10 @@ export function DashboardLayout() {
               <NavLink to="/clients" className="sidebar__link">
                 <PeopleAltOutlinedIcon fontSize="small" />
                 Clientes
+              </NavLink>
+              <NavLink to="/users" className="sidebar__link">
+                <GroupAddOutlinedIcon fontSize="small" />
+                Usuarios
               </NavLink>
             </>
           ) : null}

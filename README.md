@@ -13,11 +13,11 @@ Credenciales de prueba:
 
 | Cédula | Contraseña | Nombre |
 |---|---|---|
-| `900100001` | `demo12345` | Carlos Escorcia — único con rol `ADMIN` (ve Correos y Clientes) |
+| `900100001` | `demo12345` | Carlos Escorcia — único con rol `ADMIN` (ve Correos, Clientes y Usuarios) |
 | `900100002` | `demo12345` | Jennifer Navarro |
 | `900100003` | `demo12345` | Adriana Castellano |
 
-Con cualquiera de esos usuarios podés registrar un crédito (la cédula tiene autocomplete: si ya existe, el nombre se completa solo) con confirmación y cuota estimada, consultar/filtrar/editar/eliminar la tabla de créditos (paginada, 10 por página en escritorio y 5 en mobile), y entrar al detalle de uno (`/credits/:id`) para exportarlo a PDF. Con la cuenta de Carlos Escorcia además se ve `/email-jobs` (estado de notificaciones) y `/clients` (directorio de clientes) — el resto de las cuentas no las ve. Para correrlo en tu máquina en vez de usar la demo: [Instalación Local](#instalación-local).
+Con cualquiera de esos usuarios podés registrar un crédito (la cédula tiene autocomplete: si ya existe, el nombre se completa solo) con confirmación y cuota estimada, consultar/filtrar/editar/eliminar la tabla de créditos (paginada, 10 por página en escritorio y 5 en mobile), y entrar al detalle de uno (`/credits/:id`) para exportarlo a PDF. Con la cuenta de Carlos Escorcia además se ve `/email-jobs` (estado de notificaciones), `/clients` (directorio de clientes) y `/users` (crear cuentas de prueba) — el resto de las cuentas no las ve. Para correrlo en tu máquina en vez de usar la demo: [Instalación Local](#instalación-local).
 
 > **¿La API tarda en responder la primera vez?** El backend corre en el plan gratuito de Render y puede entrar en reposo por inactividad. La web lo detecta sola y muestra una pantalla de "despertando el servidor" (con el logo animado) mientras reintenta — no hace falta refrescar.
 
@@ -133,6 +133,7 @@ Solo necesario si querés correr la app en tu máquina en vez de usar la [demo e
 | `/credits/:id` | Detalle de un crédito: editar, eliminar y exportar a PDF | [`pages/credits/README.md`](pages/credits/README.md) |
 | `/email-jobs` | Ver el estado de entrega de notificaciones, errores visibles al toque — **solo `role: "ADMIN"`** | [`pages/email-jobs/README.md`](pages/email-jobs/README.md) |
 | `/clients` | Directorio de solo lectura (cédula + nombre) — **solo `role: "ADMIN"`** | [`pages/clients/README.md`](pages/clients/README.md) |
+| `/users` | Crear cuentas `USER` de prueba (comerciales) — **solo `role: "ADMIN"`** | [`pages/users/README.md`](pages/users/README.md) |
 
 ## Roles Y Permisos
 
@@ -140,14 +141,16 @@ Cada usuario tiene un `role` (`ADMIN` o `USER`) que viaja en el JWT desde `credi
 
 | Rol | Cuenta(s) | Qué ve de más |
 |---|---|---|
-| `ADMIN` | `900100001` (Carlos Escorcia) — única cuenta seed con este rol | `/email-jobs` y `/clients`, además de todo lo que ve `USER` |
+| `ADMIN` | `900100001` (Carlos Escorcia) — única cuenta seed con este rol | `/email-jobs`, `/clients` y `/users`, además de todo lo que ve `USER` |
 | `USER` | Todas las demás (Jennifer, Adriana, cuentas nuevas por `/register` del backend, usuario demo) | `/credits` y `/credits/:id` únicamente |
 
 Cómo funciona, de punta a punta:
 1. `credit-backend` guarda `role` en `AppUser` (Firestore, colección `users`) y lo mete como claim en el JWT al hacer login (`JwtService.createToken`).
 2. `JwtAuthenticationFilter` lee ese claim y le da al request la autoridad `ROLE_<role>` de Spring Security.
 3. `SecurityConfig` exige `ROLE_ADMIN` para `/api/v1/email-jobs/**` — si una cuenta `USER` llama ese endpoint (aunque sea directo con `curl`, sin pasar por la UI), el backend responde `403 {"status":403,"code":"FORBIDDEN",...}`. `/api/v1/clients` no tiene esa restricción a propósito: lo usa el autocomplete del formulario de créditos, que usan todas las cuentas.
-4. En `credit-web`, `state.user.role` (guardado en `localStorage` junto al resto de la sesión) decide dos cosas: `DashboardLayout` oculta los links de Correos/Clientes en el sidebar si no es `ADMIN`, y `AdminRoute` (envuelve esas dos rutas en `router.jsx`) redirige a `/credits` si alguien entra por URL directa sin el rol.
+4. En `credit-web`, `state.user.role` (guardado en `localStorage` junto al resto de la sesión) decide dos cosas: `DashboardLayout` oculta los links de Correos/Clientes/Usuarios en el sidebar si no es `ADMIN`, y `AdminRoute` (envuelve esas tres rutas en `router.jsx`) redirige a `/credits` si alguien entra por URL directa sin el rol.
+
+`/users` le da al admin una forma de crear cuentas `USER` de prueba (comerciales) desde la UI, usando el único endpoint de creación de cuentas que existe (`POST /api/v1/auth/register`, público, `role: "USER"` fijo server-side). Ver [`pages/users/README.md`](pages/users/README.md) y `document/security.md` por el detalle no obvio: ese endpoint devuelve token+sesión de la cuenta recién creada (mismo formato que `/login`), así que `/users` lo llama directo con `request()` en vez de pasarlo por `AuthContext.login()` — si no, crear una cuenta de prueba te desloguearía del admin y te loguearía como la cuenta nueva.
 
 Cómo probarlo vos mismo (con la demo en vivo):
 1. Login con `900100001` / `demo12345` (Carlos) → el sidebar muestra Créditos, Correos y Clientes.

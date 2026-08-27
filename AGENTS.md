@@ -56,6 +56,7 @@ Reglas:
 - Cambios de sesion/auth: actualizar `document/security.md` y `pages/login/README.md`.
 - Cambios de creditos: actualizar `pages/credits/README.md`.
 - Cambios de clientes o roles/permisos: actualizar `pages/clients/README.md` y `document/security.md`.
+- Cambios de creación de usuarios/comerciales de prueba: actualizar `pages/users/README.md` y `document/security.md`.
 - Cambios de despliegue/env: actualizar `README.md`, `.env.example` y `document/deployment.md`.
 - Cambios en skills: actualizar `.codex/skills/**/SKILL.md` y `document/agents/commit-guide.md` si afecta el flujo de agentes.
 
