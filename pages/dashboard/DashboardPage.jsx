@@ -86,7 +86,7 @@ function aggregateEmailJobsByStatus(jobs) {
 
 function StatCard({ icon, iconColor, label, value, tooltip, caption }) {
   return (
-    <Card className="admin-card--padded">
+    <Card className="admin-card--padded dashboard-stat-card">
       <Stack direction="row" spacing={1.75} alignItems="flex-start">
         <Box
           sx={{
@@ -212,8 +212,8 @@ export function DashboardPage() {
         </Card>
       ) : (
         <>
-          <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="stretch">
-            <Box sx={{ flex: "1 1 0", minWidth: 0 }}>
+          <Box className="dashboard-stats-grid">
+            <Box sx={{ minWidth: 0 }}>
               <StatCard
                 icon={<ReceiptLongOutlinedIcon fontSize="small" />}
                 iconColor="#052224"
@@ -222,7 +222,7 @@ export function DashboardPage() {
                 caption="Total de créditos registrados"
               />
             </Box>
-            <Box sx={{ flex: "1 1 0", minWidth: 0 }}>
+            <Box sx={{ minWidth: 0 }}>
               <StatCard
                 icon={<AccountBalanceWalletOutlinedIcon fontSize="small" />}
                 iconColor="#049a5f"
@@ -232,7 +232,7 @@ export function DashboardPage() {
                 caption="Suma de todos los créditos"
               />
             </Box>
-            <Box sx={{ flex: "1 1 0", minWidth: 0 }}>
+            <Box sx={{ minWidth: 0 }}>
               <StatCard
                 icon={<TrendingUpOutlinedIcon fontSize="small" />}
                 iconColor="#00d280"
@@ -242,7 +242,7 @@ export function DashboardPage() {
                 caption="Intereses proyectados"
               />
             </Box>
-            <Box sx={{ flex: "1 1 0", minWidth: 0 }}>
+            <Box sx={{ minWidth: 0 }}>
               <StatCard
                 icon={<PercentOutlinedIcon fontSize="small" />}
                 iconColor="#f59e0b"
@@ -251,7 +251,7 @@ export function DashboardPage() {
                 caption="Mensual, entre todos los créditos"
               />
             </Box>
-          </Stack>
+          </Box>
 
           <Card className="admin-card--padded">
             <Stack spacing={2}>

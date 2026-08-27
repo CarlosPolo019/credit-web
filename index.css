@@ -237,6 +237,17 @@ a {
   padding: 24px;
 }
 
+.dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+.dashboard-stat-card {
+  height: 100%;
+}
+
 .page-title {
   display: grid;
   gap: 4px;
@@ -462,6 +473,12 @@ a {
   padding: 16px;
 }
 
+@media (max-width: 1180px) {
+  .dashboard-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 800px) {
   .login {
     min-height: 100svh;
@@ -603,6 +620,10 @@ a {
 
   .admin-card--padded {
     padding: 16px;
+  }
+
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr;
   }
 
   .page-title {
