@@ -159,18 +159,7 @@ Cada usuario tiene un `role` (`ADMIN` o `USER`) que viaja en el JWT desde `credi
 | `ADMIN` | `900100001` (Carlos Escorcia) — única cuenta seed con este rol | `/dashboard`, `/email-jobs`, `/clients` y `/users`, además de todo lo que ve `USER` |
 | `USER` | Todas las demás (Jennifer, Adriana, cuentas creadas por un admin desde `/users`, usuario demo) | `/credits` y `/credits/:id` únicamente |
 
-Cómo funciona, de punta a punta:
-1. `credit-backend` guarda `role` en `AppUser` (Firestore, colección `users`) y lo mete como claim en el JWT al hacer login (`JwtService.createToken`).
-2. `JwtAuthenticationFilter` lee ese claim y le da al request la autoridad `ROLE_<role>` de Spring Security.
-3. `SecurityConfig` exige `ROLE_ADMIN` para `/api/v1/email-jobs/**` — si una cuenta `USER` llama ese endpoint (aunque sea directo con `curl`, sin pasar por la UI), el backend responde `403 {"status":403,"code":"FORBIDDEN",...}`. `/api/v1/clients` no tiene esa restricción a propósito: lo usa el autocomplete del formulario de créditos, que usan todas las cuentas.
-4. En `credit-web`, `state.user.role` (guardado en `localStorage` junto al resto de la sesión) decide dos cosas: `DashboardLayout` oculta los links de Correos/Clientes/Usuarios en el sidebar si no es `ADMIN`, y `AdminRoute` (envuelve esas tres rutas en `router.jsx`) redirige a `/credits` si alguien entra por URL directa sin el rol.
-
-`/users` le da al admin una forma de crear cuentas `USER` (o, si de verdad hace falta, `ADMIN`) de prueba desde la UI, usando `POST /api/v1/users` — un endpoint dedicado y admin-only (`SecurityConfig.hasRole("ADMIN")`), no relacionado con auto-registro. **No existe auto-registro público en este sistema**: `credit-backend` no expone (ni expuso nunca en este repo) una pantalla de registro; la única forma de crear una cuenta es que un `ADMIN` la cree desde `/users`. Ver [`pages/users/README.md`](pages/users/README.md) y `document/security.md` por el detalle no obvio: a diferencia de un login, `POST /api/v1/users` no devuelve token de la cuenta creada (solo `{ document, fullName, role }`), así que no hay riesgo de que `/users` pise la sesión del admin.
-
-Cómo probarlo vos mismo (con la demo en vivo):
-1. Login con `900100001` / `demo12345` (Carlos) → el sidebar muestra Créditos, Correos y Clientes.
-2. Login con `900100002` / `demo12345` (Jennifer) → el sidebar solo muestra Créditos; entrar a `https://fyatest.cmescorcia.com/email-jobs` a mano redirige solo a `/credits`.
-3. Con el token de Jennifer, `curl -H "Authorization: Bearer <token>" https://fyatest-api.cmescorcia.com/api/v1/email-jobs` devuelve `403` — la restricción es real en el backend, no solo cosmética en la UI.
+La restricción es real en el backend, no solo cosmética en la UI: `SecurityConfig` exige `ROLE_ADMIN` para `/api/v1/email-jobs/**` (un token `USER` recibe `403` aunque llame directo con `curl`), y `POST /api/v1/users` — un endpoint dedicado, admin-only, sin relación con auto-registro — es la única forma de crear una cuenta nueva o de que termine siendo `ADMIN` (no devuelve token de la cuenta creada, así que no pisa la sesión del admin). `AdminRoute` en `router.jsx` es solo la segunda línea de defensa: oculta el sidebar y redirige a `/credits` si alguien sin el rol entra por URL directa. Detalle de punta a punta: [`document/security.md`](document/security.md), [`pages/users/README.md`](pages/users/README.md).
 
 ## Test Y Build
 
