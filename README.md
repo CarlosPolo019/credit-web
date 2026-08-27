@@ -2,6 +2,19 @@
 
 Panel administrativo en React para la prueba técnica de créditos de Fya Social Capital — los operadores registran/consultan créditos y monitorean las notificaciones por correo.
 
+## Índice
+- [Demo En Vivo](#demo-en-vivo)
+- [Sobre Esta Prueba Técnica](#sobre-esta-prueba-técnica)
+- [Arquitectura](#arquitectura)
+- [Capturas](#capturas)
+- [Stack](#stack)
+- [Instalación Local](#instalación-local)
+- [Páginas](#páginas)
+- [Roles Y Permisos](#roles-y-permisos)
+- [Test Y Build](#test-y-build)
+- [Mapa De Documentación](#mapa-de-documentación)
+- [Deploy](#deploy)
+
 ## Demo En Vivo
 
 No hace falta instalar nada para probar la app — frontend y backend ya están desplegados:
