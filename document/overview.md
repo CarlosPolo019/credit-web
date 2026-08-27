@@ -5,7 +5,8 @@
 ## Arquitectura
 ```mermaid
 flowchart LR
-  main[main.jsx] --> app[App + Router]
+  main[main.jsx] --> wake[BackendWakeGate]
+  wake --> app[App + Router]
   app --> auth[AuthContext]
   app --> pages[Pages]
   pages --> services[credits.service.js]
@@ -13,8 +14,10 @@ flowchart LR
   client --> backend[Spring Boot API]
 ```
 
+`BackendWakeGate` (`app/BackendWakeGate.jsx`) bloquea el render de `App` hasta que `GET /actuator/health` responde, o hasta 75s (lo que pase primero) — cubre el cold start del plan gratuito de Render sin que cada pantalla tenga que manejar su propio error de conexion confuso.
+
 ## Carpetas
-- `app/`: router, layouts y guardas.
+- `app/`: router, layouts, guardas y `BackendWakeGate` (gate de cold start del backend).
 - `auth/`: contexto de sesion y storage.
 - `api/`: cliente REST base.
 - `lib/`: validaciones y formateo.

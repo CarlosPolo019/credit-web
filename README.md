@@ -17,7 +17,9 @@ Credenciales de prueba:
 | `900100002` | `demo12345` | Jennifer Navarro |
 | `900100003` | `demo12345` | Adriana Castellano |
 
-Con cualquiera de esos usuarios podés registrar un crédito (con confirmación y cuota estimada), consultar/filtrar/editar/eliminar la tabla de créditos, entrar al detalle de uno (`/credits/:id`) para exportarlo a PDF, y ver en `/email-jobs` el estado real de las notificaciones. Para correrlo en tu máquina en vez de usar la demo: [Instalación Local](#instalación-local).
+Con cualquiera de esos usuarios podés registrar un crédito (con confirmación y cuota estimada), consultar/filtrar/editar/eliminar la tabla de créditos (paginada, 10 por página en escritorio y 5 en mobile), entrar al detalle de uno (`/credits/:id`) para exportarlo a PDF, y ver en `/email-jobs` el estado real de las notificaciones. Para correrlo en tu máquina en vez de usar la demo: [Instalación Local](#instalación-local).
+
+> **¿La API tarda en responder la primera vez?** El backend corre en el plan gratuito de Render y puede entrar en reposo por inactividad. La web lo detecta sola y muestra una pantalla de "despertando el servidor" (con el logo animado) mientras reintenta — no hace falta refrescar.
 
 ## Sobre Esta Prueba Técnica
 
@@ -119,7 +121,7 @@ Solo necesario si querés correr la app en tu máquina en vez de usar la [demo e
 | Ruta | Qué hace | Doc |
 |---|---|---|
 | `/login` | Ingreso público | [`pages/login/README.md`](pages/login/README.md) |
-| `/credits` | Registrar créditos (con confirmación + cuota estimada) y consultar los activos | [`pages/credits/README.md`](pages/credits/README.md) |
+| `/credits` | Registrar créditos (con confirmación + cuota estimada) y consultar los activos, paginados | [`pages/credits/README.md`](pages/credits/README.md) |
 | `/credits/:id` | Detalle de un crédito: editar, eliminar y exportar a PDF | [`pages/credits/README.md`](pages/credits/README.md) |
 | `/email-jobs` | Ver el estado de entrega de notificaciones, errores visibles al toque | [`pages/email-jobs/README.md`](pages/email-jobs/README.md) |
 

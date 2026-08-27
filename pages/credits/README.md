@@ -38,6 +38,7 @@
 - Error para fallas de API (se muestra en la pagina y, si el modal de registro esta abierto, tambien dentro del modal).
 - Success al registrar credito.
 - En mobile, el listado reutiliza la misma fuente de datos pero presenta cada fila como tarjeta con etiquetas por campo y controles de ordenamiento visibles arriba de las tarjetas.
+- Paginacion: `CreditsPage.jsx` trae todos los creditos que matchean los filtros y pagina en el cliente (el backend no tiene `page`/`size` todavia) — 10 por pagina en escritorio, 5 en mobile (mismo breakpoint de 800px que cambia la tabla a tarjetas). El pie de `DataTable` muestra el total real (no el de la pagina actual) y el control de paginacion de MUI cuando hay mas de una pagina. Cambiar de filtro u orden vuelve a la pagina 1.
 
 ## Confirmacion De Registro
 - Al enviar el formulario no se crea el credito directamente: se valida localmente, se pide la cuota/total estimados a `POST /api/v1/credits/estimate` (mismo calculo que usa el backend para `CreditResponse` y el PDF — no hay formula duplicada en el frontend), y se abre `CreditConfirmDialog.jsx` con un resumen (cliente, cedula, comercial, valor, tasa, plazo, cuota/total).
