@@ -181,7 +181,10 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
                       onInputChange={handleClientInputChange}
                       onChange={handleClientSelect}
                       filterOptions={clientFilterOptions}
-                      getOptionLabel={(option) => (typeof option === "string" ? option : `${option.document} — ${option.fullName}`)}
+                      getOptionLabel={(option) => {
+                        if (!option) return "";
+                        return typeof option === "string" ? option : `${option.document} — ${option.fullName}`;
+                      }}
                       isOptionEqualToValue={(option, value) => option.document === value?.document}
                       renderInput={(params) => (
                         <Input
