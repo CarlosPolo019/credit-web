@@ -14,7 +14,7 @@ import { useTheme } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext.jsx";
 import { formatCurrency, formatDate } from "../../lib/format.js";
@@ -51,8 +51,14 @@ export function CreditsPage() {
   const navigate = useNavigate();
   const theme = useTheme();
   const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
+  // Matches the 800px breakpoint where DataTable switches from a table to
+  // stacked cards (index.css) — a different, narrower cutoff than
+  // `isCompact` above, which only drives the create-credit dialog.
+  const isMobileTable = useMediaQuery("(max-width:800px)");
+  const pageSize = isMobileTable ? 5 : 10;
   const [filters, setFilters] = useState(defaultFilters);
   const [credits, setCredits] = useState([]);
+  const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -104,6 +110,26 @@ export function CreditsPage() {
       window.clearTimeout(timeoutId);
     };
   }, [loadCredits]);
+
+  // A new search/sort starts back at page 1; changing page size (rotating
+  // the device) can also leave the current page out of range.
+  useEffect(() => {
+    setPage(1);
+  }, [filters]);
+
+  const pageCount = Math.max(1, Math.ceil(credits.length / pageSize));
+  // Derive the in-range page synchronously (not via effect) so a stale
+  // `page` after data/pageSize changes never slices to an empty page for
+  // a frame before the effect below catches up.
+  const clampedPage = Math.min(page, pageCount);
+  useEffect(() => {
+    if (page !== clampedPage) setPage(clampedPage);
+  }, [page, clampedPage]);
+
+  const pagedCredits = useMemo(
+    () => credits.slice((clampedPage - 1) * pageSize, clampedPage * pageSize),
+    [credits, clampedPage, pageSize],
+  );
 
   const handleFilterChange = (event) => {
     const { name, value } = event.target;
@@ -268,7 +294,7 @@ export function CreditsPage() {
           </Grid>
           <DataTable
             columns={creditColumns}
-            rows={credits}
+            rows={pagedCredits}
             getRowId={(row) => row.id}
             renderCell={renderCell}
             isLoading={isLoading}
@@ -277,6 +303,10 @@ export function CreditsPage() {
             onSortChange={handleSortChange}
             onRowClick={openCreditDetail}
             removingRowId={removingCreditId}
+            totalCount={credits.length}
+            page={clampedPage}
+            pageCount={pageCount}
+            onPageChange={setPage}
           />
         </Stack>
       </Card>

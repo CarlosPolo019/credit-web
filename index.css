@@ -749,7 +749,7 @@ a {
 
   .data-table__body {
     display: grid;
-    gap: 12px;
+    gap: 22px;
   }
 
   .data-table__row {

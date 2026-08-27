@@ -3,6 +3,7 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import LinearProgress from "@mui/material/LinearProgress";
+import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -28,6 +29,10 @@ export function DataTable({
   onSortChange,
   onRowClick,
   removingRowId,
+  totalCount,
+  page,
+  pageCount,
+  onPageChange,
 }) {
   const sortableColumns = onSortChange ? columns.filter((column) => column.sortKey) : [];
 
@@ -130,8 +135,25 @@ export function DataTable({
           })}
         </TableBody>
       </Table>
-      <Stack className="data-table__footer" direction="row" justifyContent="space-between">
-        <Typography variant="caption">{rows.length} {countLabel}</Typography>
+      <Stack
+        className="data-table__footer"
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        flexWrap="wrap"
+        rowGap={1}
+      >
+        <Typography variant="caption">{totalCount ?? rows.length} {countLabel}</Typography>
+        {pageCount > 1 ? (
+          <Pagination
+            count={pageCount}
+            page={page}
+            onChange={(_event, value) => onPageChange(value)}
+            size="small"
+            color="primary"
+            shape="rounded"
+          />
+        ) : null}
       </Stack>
     </Box>
   );
