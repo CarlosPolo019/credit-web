@@ -50,7 +50,9 @@ sequenceDiagram
   participant API as credit-backend
   User->>Form: Completa cédula, nombre, valor, tasa, plazo
   Form->>Form: valida (sin pedir Comercial: viene de la sesión)
-  Form->>Confirm: abre resumen + cuota/total estimados
+  Form->>API: POST /api/v1/credits/estimate
+  API-->>Form: cuota y total estimados
+  Form->>Confirm: abre resumen + estimación (recibida del backend)
   User->>Confirm: Confirmar y registrar
   Confirm->>API: POST /api/v1/credits (Bearer JWT)
   API-->>Confirm: 201 CreditResponse
