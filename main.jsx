@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Analytics } from "@vercel/analytics/react";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 import { AuthProvider } from "./auth/AuthContext.jsx";
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <App />
         </AuthProvider>
       </BackendWakeGate>
+      <Analytics />
     </ThemeProvider>
   </React.StrictMode>,
 );

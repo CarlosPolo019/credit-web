@@ -104,6 +104,7 @@ sequenceDiagram
 | Build | Vite |
 | Ruteo | React Router |
 | Gráficos | `recharts` (barras y donut en `/dashboard`) |
+| Analytics | `@vercel/analytics` (page views, privacy-friendly, sin cookies ni banner de consentimiento) — activado en `main.jsx`, datos visibles en el dashboard de Vercel |
 | PDF | Generado en `credit-backend` (`GET /credits/{id}/pdf`), mismo endpoint que usa `credit-mobile`; la web solo descarga el archivo |
 | Lenguaje | Solo JavaScript (sin TypeScript, sin paso de compilación de tipos) |
 
