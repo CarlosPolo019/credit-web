@@ -11,7 +11,12 @@ const MESSAGE_ROTATION_MS = 4000;
 // order so the wait — up to 5 minutes on a very slow cold start — reads as
 // a story with beats instead of one static line staring back at you.
 const MESSAGE_BUCKETS = [
-  { until: 8000, messages: ["Conectando con el servidor...", "Verificando la conexión..."] },
+  {
+    until: 11000,
+    messages: [
+      "El servidor gratuito se apaga solo tras un rato sin uso, para ahorrar recursos — se está despertando, dale unos segundos.",
+    ],
+  },
   {
     until: 25000,
     messages: [
@@ -123,7 +128,7 @@ export function BackendWakeGate({ children }) {
       <Typography variant="h6" sx={{ color: "text.primary" }}>
         Despertando el servidor
       </Typography>
-      <Typography variant="body2" sx={{ color: "text.secondary", minHeight: 24 }}>
+      <Typography variant="body2" sx={{ color: "text.secondary", minHeight: 44, maxWidth: 360, textAlign: "center" }}>
         {messageForElapsed(elapsedMs, rotationIndex)}
       </Typography>
       <Box className="backend-wake__bar">
