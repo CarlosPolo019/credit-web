@@ -6,7 +6,6 @@ import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Collapse from "@mui/material/Collapse";
-import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
@@ -213,8 +212,8 @@ export function DashboardPage() {
         </Card>
       ) : (
         <>
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="stretch">
+            <Box sx={{ flex: "1 1 0", minWidth: 0 }}>
               <StatCard
                 icon={<ReceiptLongOutlinedIcon fontSize="small" />}
                 iconColor="#052224"
@@ -222,8 +221,8 @@ export function DashboardPage() {
                 value={credits.length.toLocaleString("es-CO")}
                 caption="Total de créditos registrados"
               />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            </Box>
+            <Box sx={{ flex: "1 1 0", minWidth: 0 }}>
               <StatCard
                 icon={<AccountBalanceWalletOutlinedIcon fontSize="small" />}
                 iconColor="#049a5f"
@@ -232,8 +231,8 @@ export function DashboardPage() {
                 tooltip={formatCurrency(totalRequestedAmount)}
                 caption="Suma de todos los créditos"
               />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            </Box>
+            <Box sx={{ flex: "1 1 0", minWidth: 0 }}>
               <StatCard
                 icon={<TrendingUpOutlinedIcon fontSize="small" />}
                 iconColor="#00d280"
@@ -242,8 +241,8 @@ export function DashboardPage() {
                 tooltip={formatCurrency(totalEstimatedProfit)}
                 caption="Intereses proyectados"
               />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            </Box>
+            <Box sx={{ flex: "1 1 0", minWidth: 0 }}>
               <StatCard
                 icon={<PercentOutlinedIcon fontSize="small" />}
                 iconColor="#f59e0b"
@@ -251,8 +250,8 @@ export function DashboardPage() {
                 value={`${averageInterestRate.toLocaleString("es-CO", { maximumFractionDigits: 2 })}%`}
                 caption="Mensual, entre todos los créditos"
               />
-            </Grid>
-          </Grid>
+            </Box>
+          </Stack>
 
           <Card className="admin-card--padded">
             <Stack spacing={2}>
