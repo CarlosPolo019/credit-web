@@ -5,15 +5,15 @@ Panel administrativo en React para la prueba técnica de créditos de Fya Social
 ## Índice
 - [Demo En Vivo](#demo-en-vivo)
 - [Sobre Esta Prueba Técnica](#sobre-esta-prueba-técnica)
-- [Arquitectura](#arquitectura)
 - [Capturas](#capturas)
+- [Arquitectura](#arquitectura)
 - [Stack](#stack)
 - [Instalación Local](#instalación-local)
 - [Páginas](#páginas)
 - [Roles Y Permisos](#roles-y-permisos)
 - [Test Y Build](#test-y-build)
-- [Mapa De Documentación](#mapa-de-documentación)
 - [Deploy](#deploy)
+- [Mapa De Documentación](#mapa-de-documentación)
 
 ## Demo En Vivo
 
@@ -43,6 +43,20 @@ Este repo es uno de los tres entregables independientes de la prueba técnica de
 | `credit-backend` | API REST, Firestore, JWT, worker de correo | [github.com/CarlosPolo019/credit-backend](https://github.com/CarlosPolo019/credit-backend) |
 | `credit-web` (este repo) | Panel administrativo para registrar/consultar créditos y monitorear correos | — |
 | `credit-mobile` | App Android para el comercial en campo | [github.com/CarlosPolo019/credit-mobile](https://github.com/CarlosPolo019/credit-mobile) |
+
+## Capturas
+
+| Login | Consulta de créditos |
+|---|---|
+| ![Login](docs/screenshots/login.png) | ![Consulta de créditos](docs/screenshots/credits-list.png) |
+
+| Registrar crédito | Confirmación con cuota estimada |
+|---|---|
+| ![Modal de registro](docs/screenshots/credits-register-modal.png) | ![Modal de confirmación](docs/screenshots/credits-confirm-modal.png) |
+
+| Detalle de crédito | Correos de crédito |
+|---|---|
+| ![Detalle de crédito](docs/screenshots/credit-detail.png) | ![Vista de correos](docs/screenshots/email-jobs.png) |
 
 ## Arquitectura
 
@@ -81,20 +95,6 @@ sequenceDiagram
   API-->>Confirm: 201 CreditResponse
   Confirm-->>User: éxito, tabla se actualiza
 ```
-
-## Capturas
-
-| Login | Consulta de créditos |
-|---|---|
-| ![Login](docs/screenshots/login.png) | ![Consulta de créditos](docs/screenshots/credits-list.png) |
-
-| Registrar crédito | Confirmación con cuota estimada |
-|---|---|
-| ![Modal de registro](docs/screenshots/credits-register-modal.png) | ![Modal de confirmación](docs/screenshots/credits-confirm-modal.png) |
-
-| Detalle de crédito | Correos de crédito |
-|---|---|
-| ![Detalle de crédito](docs/screenshots/credit-detail.png) | ![Vista de correos](docs/screenshots/email-jobs.png) |
 
 ## Stack
 
@@ -180,19 +180,6 @@ npm test
 npm run build
 ```
 
-## Mapa De Documentación
-
-| Archivo | Qué cubre |
-|---|---|
-| [`AGENTS.md`](AGENTS.md) | Reglas de trabajo para agentes en este repo |
-| [`document/overview.md`](document/overview.md) | Arquitectura de la SPA |
-| [`document/module-map.md`](document/module-map.md) | Inventario canónico de vistas/módulos |
-| [`document/api.md`](document/api.md) | Contrato REST que consume la web |
-| [`document/security.md`](document/security.md) | JWT, storage, rutas protegidas |
-| [`document/testing.md`](document/testing.md) | Comandos y escenarios de prueba |
-| [`document/deployment.md`](document/deployment.md) | Vercel, dominio propio y `VITE_API_BASE_URL` |
-| [`document/agents/`](document/agents/) | Playbooks de agentes y convenciones de commit |
-
 ## Deploy
 
 Producción corre en Vercel bajo el dominio propio `https://fyatest.cmescorcia.com`. El deploy es manual: `git push` solo dispara lint/test/build como validación, no despliega nada.
@@ -205,3 +192,16 @@ flowchart LR
 ```
 
 Para desplegar: GitHub → **Actions** → **Deploy Web** → **Run workflow**, o desde la terminal (requiere `gh` autenticado) con `npm run deploy` (`npm run deploy:status` para ver el resultado). Detalles (secrets, dominio/DNS, `vercel.json`): [`document/deployment.md`](document/deployment.md).
+
+## Mapa De Documentación
+
+| Archivo | Qué cubre |
+|---|---|
+| [`AGENTS.md`](AGENTS.md) | Reglas de trabajo para agentes en este repo |
+| [`document/overview.md`](document/overview.md) | Arquitectura de la SPA |
+| [`document/module-map.md`](document/module-map.md) | Inventario canónico de vistas/módulos |
+| [`document/api.md`](document/api.md) | Contrato REST que consume la web |
+| [`document/security.md`](document/security.md) | JWT, storage, rutas protegidas |
+| [`document/testing.md`](document/testing.md) | Comandos y escenarios de prueba |
+| [`document/deployment.md`](document/deployment.md) | Vercel, dominio propio y `VITE_API_BASE_URL` |
+| [`document/agents/`](document/agents/) | Playbooks de agentes y convenciones de commit |
