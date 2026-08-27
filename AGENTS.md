@@ -8,7 +8,7 @@ Guia operativa para agentes que trabajen en `credit-web`.
 - Rutas: `/login` publica; `/credits`, `/credits/:id` protegidas por `ProtectedRoute`; `/dashboard`, `/email-jobs`, `/clients` y `/users` protegidas por `ProtectedRoute` + `AdminRoute` (solo `role: "ADMIN"`, hoy unicamente `900100001`).
 - API: solo REST contra Spring Boot mediante `api/client.js`.
 - Sesion: JWT en `localStorage` (necesario para que enlaces abiertos en pestaña nueva, como el del correo de crédito, reutilicen la sesión), limpieza en logout y en `401`. `state.user.role` viaja en el JWT/sesion, controla que ve el sidebar y las rutas de admin.
-- Dominio activo: registro y consulta de creditos (con autocomplete de cliente por cedula, `GET /api/v1/clients`), directorio de clientes de solo lectura.
+- Dominio activo: registro y consulta de creditos (con autocomplete de cliente por cedula, `GET /api/v1/clients`); admin-only: dashboard de estadisticas agregadas (`/dashboard`), estado de notificaciones por correo (`/email-jobs`), directorio de clientes de solo lectura (`/clients`) y creacion de cuentas de prueba (`/users`, `POST /api/v1/users` — no hay auto-registro publico).
 
 ## Protocolo De Inicio
 1. Ejecutar `pwd` y confirmar que estas en `credit-web`.

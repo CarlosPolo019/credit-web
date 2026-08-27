@@ -13,7 +13,7 @@ Credenciales de prueba:
 
 | Cédula | Contraseña | Nombre |
 |---|---|---|
-| `900100001` | `demo12345` | Carlos Escorcia — único con rol `ADMIN` (ve Correos, Clientes y Usuarios) |
+| `900100001` | `demo12345` | Carlos Escorcia — único con rol `ADMIN` (ve Dashboard, Correos, Clientes y Usuarios) |
 | `900100002` | `demo12345` | Jennifer Navarro |
 | `900100003` | `demo12345` | Adriana Castellano |
 
@@ -90,6 +90,7 @@ sequenceDiagram
 | UI | React 18.3.1, MUI |
 | Build | Vite |
 | Ruteo | React Router |
+| Gráficos | `recharts` (barras y donut en `/dashboard`) |
 | PDF | Generado en `credit-backend` (`GET /credits/{id}/pdf`), mismo endpoint que usa `credit-mobile`; la web solo descarga el archivo |
 | Lenguaje | Solo JavaScript (sin TypeScript, sin paso de compilación de tipos) |
 
@@ -138,12 +139,12 @@ Solo necesario si querés correr la app en tu máquina en vez de usar la [demo e
 
 ## Roles Y Permisos
 
-Cada usuario tiene un `role` (`ADMIN` o `USER`) que viaja en el JWT desde `credit-backend`. Hoy solo distingue quién ve Correos y Clientes — **crear/editar/eliminar créditos es igual para todas las cuentas**, el rol no toca eso.
+Cada usuario tiene un `role` (`ADMIN` o `USER`) que viaja en el JWT desde `credit-backend`. Hoy solo distingue quién ve Dashboard, Correos, Clientes y Usuarios — **crear/editar/eliminar créditos es igual para todas las cuentas**, el rol no toca eso.
 
 | Rol | Cuenta(s) | Qué ve de más |
 |---|---|---|
 | `ADMIN` | `900100001` (Carlos Escorcia) — única cuenta seed con este rol | `/dashboard`, `/email-jobs`, `/clients` y `/users`, además de todo lo que ve `USER` |
-| `USER` | Todas las demás (Jennifer, Adriana, cuentas nuevas por `/register` del backend, usuario demo) | `/credits` y `/credits/:id` únicamente |
+| `USER` | Todas las demás (Jennifer, Adriana, cuentas creadas por un admin desde `/users`, usuario demo) | `/credits` y `/credits/:id` únicamente |
 
 Cómo funciona, de punta a punta:
 1. `credit-backend` guarda `role` en `AppUser` (Firestore, colección `users`) y lo mete como claim en el JWT al hacer login (`JwtService.createToken`).
@@ -151,7 +152,7 @@ Cómo funciona, de punta a punta:
 3. `SecurityConfig` exige `ROLE_ADMIN` para `/api/v1/email-jobs/**` — si una cuenta `USER` llama ese endpoint (aunque sea directo con `curl`, sin pasar por la UI), el backend responde `403 {"status":403,"code":"FORBIDDEN",...}`. `/api/v1/clients` no tiene esa restricción a propósito: lo usa el autocomplete del formulario de créditos, que usan todas las cuentas.
 4. En `credit-web`, `state.user.role` (guardado en `localStorage` junto al resto de la sesión) decide dos cosas: `DashboardLayout` oculta los links de Correos/Clientes/Usuarios en el sidebar si no es `ADMIN`, y `AdminRoute` (envuelve esas tres rutas en `router.jsx`) redirige a `/credits` si alguien entra por URL directa sin el rol.
 
-`/users` le da al admin una forma de crear cuentas `USER` de prueba (comerciales) desde la UI, usando el único endpoint de creación de cuentas que existe (`POST /api/v1/auth/register`, público, `role: "USER"` fijo server-side). Ver [`pages/users/README.md`](pages/users/README.md) y `document/security.md` por el detalle no obvio: ese endpoint devuelve token+sesión de la cuenta recién creada (mismo formato que `/login`), así que `/users` lo llama directo con `request()` en vez de pasarlo por `AuthContext.login()` — si no, crear una cuenta de prueba te desloguearía del admin y te loguearía como la cuenta nueva.
+`/users` le da al admin una forma de crear cuentas `USER` (o, si de verdad hace falta, `ADMIN`) de prueba desde la UI, usando `POST /api/v1/users` — un endpoint dedicado y admin-only (`SecurityConfig.hasRole("ADMIN")`), no relacionado con auto-registro. **No existe auto-registro público en este sistema**: `credit-backend` no expone (ni expuso nunca en este repo) una pantalla de registro; la única forma de crear una cuenta es que un `ADMIN` la cree desde `/users`. Ver [`pages/users/README.md`](pages/users/README.md) y `document/security.md` por el detalle no obvio: a diferencia de un login, `POST /api/v1/users` no devuelve token de la cuenta creada (solo `{ document, fullName, role }`), así que no hay riesgo de que `/users` pise la sesión del admin.
 
 Cómo probarlo vos mismo (con la demo en vivo):
 1. Login con `900100001` / `demo12345` (Carlos) → el sidebar muestra Créditos, Correos y Clientes.

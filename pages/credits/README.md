@@ -56,6 +56,7 @@
 - La cedula o ID del cliente es el primer campo del formulario (identifica al cliente antes de pedir el nombre) y solo acepta digitos.
 - El registro separa primer nombre, segundo nombre, primer apellido y segundo apellido.
 - Primer nombre, primer apellido, cedula, valor, tasa y plazo son obligatorios.
+- Limites numericos (`lib/creditValidation.js#creditLimits`, espejo de `CreditLimits` en `credit-backend`): valor hasta `$200.000.000`, tasa de interes mensual entre `0.5%` y `3.5%`, plazo entre `1` y `60` meses. `CreditForm.jsx` muestra cada limite como texto de ayuda debajo del campo correspondiente.
 - El comercial se toma del usuario autenticado; no se muestra ni es editable en el formulario porque ya esta implicito en la sesion. Solo aparece como referencia en el resumen de `CreditConfirmDialog.jsx`.
 
 ## Detalle, Edicion Y Borrado

@@ -24,7 +24,10 @@ flowchart LR
 - `ui/`: componentes reutilizables.
 - `pages/login/`: vista publica de ingreso.
 - `pages/credits/`: vista protegida de registro y consulta.
+- `pages/email-jobs/`: estado de notificaciones por correo, protegido + solo `role: "ADMIN"`.
 - `pages/clients/`: directorio de solo lectura, protegido + solo `role: "ADMIN"`.
+- `pages/users/`: crear cuentas `USER`/`ADMIN` de prueba, protegido + solo `role: "ADMIN"`.
+- `pages/dashboard/`: estadisticas agregadas (creditos por comercial, montos, correos por estado), protegido + solo `role: "ADMIN"`.
 
 ## Invariantes
 - No hay acceso directo a Firestore.
