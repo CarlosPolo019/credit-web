@@ -1,4 +1,5 @@
 import CloseIcon from "@mui/icons-material/Close";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import MuiButton from "@mui/material/Button";
 import Collapse from "@mui/material/Collapse";
@@ -11,12 +12,14 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { validateCreditForm } from "../../lib/creditValidation.js";
 import { Button } from "../../ui/Button.jsx";
 import { Input } from "../../ui/Input.jsx";
 import { CreditConfirmDialog } from "./CreditConfirmDialog.jsx";
-import { estimateCredit } from "./credits.service.js";
+import { estimateCredit, listClients } from "./credits.service.js";
+
+const clientFilterOptions = createFilterOptions({ stringify: (option) => option.document });
 
 const initialValues = {
   clientFirstName: "",
@@ -41,7 +44,64 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
   const [estimate, setEstimate] = useState(null);
   const [isEstimating, setIsEstimating] = useState(false);
   const [estimateError, setEstimateError] = useState("");
+  const [clients, setClients] = useState([]);
+  const [selectedClient, setSelectedClient] = useState(null);
   const salespersonLabel = currentUser?.fullName || currentUser?.document || currentUser?.username || "";
+
+  // Only the create flow benefits from the autocomplete — an existing
+  // credit's client is already identified, editing stays as-is.
+  useEffect(() => {
+    if (isEdit) return;
+    let cancelled = false;
+    listClients()
+      .then((items) => {
+        if (!cancelled) setClients(items ?? []);
+      })
+      .catch(() => {
+        // Non-fatal: the field just behaves as a plain text input.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isEdit]);
+
+  const handleClientInputChange = (_event, newInputValue, reason) => {
+    if (reason !== "input") return;
+    const digits = newInputValue.replace(/\D/g, "");
+    setValues((previous) => ({
+      ...previous,
+      clientDocument: digits,
+      ...(selectedClient
+        ? { clientFirstName: "", clientSecondName: "", clientFirstSurname: "", clientSecondSurname: "" }
+        : {}),
+    }));
+    setErrors((previous) => ({ ...previous, clientDocument: "" }));
+    setSelectedClient(null);
+  };
+
+  const handleClientSelect = (_event, newValue) => {
+    if (newValue && typeof newValue === "object") {
+      setSelectedClient(newValue);
+      setValues((previous) => ({
+        ...previous,
+        clientDocument: newValue.document,
+        clientFirstName: newValue.firstName || "",
+        clientSecondName: newValue.secondName || "",
+        clientFirstSurname: newValue.firstSurname || "",
+        clientSecondSurname: newValue.secondSurname || "",
+      }));
+      setErrors((previous) => ({
+        ...previous,
+        clientDocument: "",
+        clientFirstName: "",
+        clientSecondName: "",
+        clientFirstSurname: "",
+        clientSecondSurname: "",
+      }));
+    } else {
+      setSelectedClient(null);
+    }
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -79,6 +139,7 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
     if (ok && !isEdit) {
       setValues(initialValues);
       setErrors({});
+      setSelectedClient(null);
     }
   };
 
@@ -109,19 +170,43 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
               </Stack>
               <Grid container spacing={2} className="credit-form__grid">
                 <Grid size={12}>
-                  <Input label="Cédula o ID" name="clientDocument" value={values.clientDocument} onChange={handleChange} error={Boolean(errors.clientDocument)} helperText={errors.clientDocument} required autoFocus slotProps={{ htmlInput: { inputMode: "numeric", pattern: "[0-9]*" } }} />
+                  {isEdit ? (
+                    <Input label="Cédula o ID" name="clientDocument" value={values.clientDocument} onChange={handleChange} error={Boolean(errors.clientDocument)} helperText={errors.clientDocument} required autoFocus slotProps={{ htmlInput: { inputMode: "numeric", pattern: "[0-9]*" } }} />
+                  ) : (
+                    <Autocomplete
+                      freeSolo
+                      options={clients}
+                      value={selectedClient}
+                      inputValue={values.clientDocument}
+                      onInputChange={handleClientInputChange}
+                      onChange={handleClientSelect}
+                      filterOptions={clientFilterOptions}
+                      getOptionLabel={(option) => (typeof option === "string" ? option : `${option.document} — ${option.fullName}`)}
+                      isOptionEqualToValue={(option, value) => option.document === value?.document}
+                      renderInput={(params) => (
+                        <Input
+                          {...params}
+                          label="Cédula o ID"
+                          required
+                          autoFocus
+                          error={Boolean(errors.clientDocument)}
+                          helperText={errors.clientDocument || "Si la cédula ya existe, el nombre se completa solo."}
+                        />
+                      )}
+                    />
+                  )}
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Input label="Primer nombre" name="clientFirstName" value={values.clientFirstName} onChange={handleChange} error={Boolean(errors.clientFirstName)} helperText={errors.clientFirstName} required />
+                  <Input label="Primer nombre" name="clientFirstName" value={values.clientFirstName} onChange={handleChange} error={Boolean(errors.clientFirstName)} helperText={errors.clientFirstName} required disabled={Boolean(selectedClient)} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Input label="Segundo nombre" name="clientSecondName" value={values.clientSecondName} onChange={handleChange} error={Boolean(errors.clientSecondName)} helperText={errors.clientSecondName} />
+                  <Input label="Segundo nombre" name="clientSecondName" value={values.clientSecondName} onChange={handleChange} error={Boolean(errors.clientSecondName)} helperText={errors.clientSecondName} disabled={Boolean(selectedClient)} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Input label="Primer apellido" name="clientFirstSurname" value={values.clientFirstSurname} onChange={handleChange} error={Boolean(errors.clientFirstSurname)} helperText={errors.clientFirstSurname} required />
+                  <Input label="Primer apellido" name="clientFirstSurname" value={values.clientFirstSurname} onChange={handleChange} error={Boolean(errors.clientFirstSurname)} helperText={errors.clientFirstSurname} required disabled={Boolean(selectedClient)} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Input label="Segundo apellido" name="clientSecondSurname" value={values.clientSecondSurname} onChange={handleChange} error={Boolean(errors.clientSecondSurname)} helperText={errors.clientSecondSurname} />
+                  <Input label="Segundo apellido" name="clientSecondSurname" value={values.clientSecondSurname} onChange={handleChange} error={Boolean(errors.clientSecondSurname)} helperText={errors.clientSecondSurname} disabled={Boolean(selectedClient)} />
                 </Grid>
               </Grid>
             </Box>

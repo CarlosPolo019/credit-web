@@ -45,6 +45,13 @@
 - El calculo es solo informativo para el operador; `POST /credits/estimate` no guarda nada.
 - El operador puede "Revisar datos" (vuelve al formulario sin perder lo escrito) o "Confirmar y registrar" (dispara el `POST /api/v1/credits` real).
 
+## Autocomplete De Cliente (Solo Al Crear)
+- El campo "Cedula o ID" en modo `create` es un MUI `Autocomplete` (`freeSolo`) sobre `listClients()` (`GET /api/v1/clients`, traido una vez al abrir el formulario) — filtra localmente por cedula mientras se tipea, sin ida y vuelta al backend por tecla.
+- Si la cedula matchea un cliente existente: los 4 campos de nombre se autocompletan y quedan deshabilitados (solo lectura, sin edicion desde este flujo). Si se borra o cambia la cedula despues, vuelve a modo "no encontrado".
+- Si no matchea ningun cliente: los campos de nombre quedan vacios y editables, igual que el comportamiento anterior.
+- En modo `edit` no hay autocomplete — el cliente del credito ya esta identificado, los campos son editables directo como siempre.
+- El backend sincroniza `clients` en cada `POST`/`PUT /api/v1/credits` (`ClientService.upsert`), asi que el autocomplete queda al dia sin importar si el operador lo uso o tipeo todo de cero.
+
 ## Validaciones
 - La cedula o ID del cliente es el primer campo del formulario (identifica al cliente antes de pedir el nombre) y solo acepta digitos.
 - El registro separa primer nombre, segundo nombre, primer apellido y segundo apellido.

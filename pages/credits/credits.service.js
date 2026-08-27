@@ -9,6 +9,15 @@ export async function createCredit(payload) {
 }
 
 /**
+ * All clients (document + name), used by the credit form's cédula
+ * autocomplete and by the read-only Clientes page. Small dataset — no
+ * server-side search/pagination, filtering happens in the client.
+ */
+export async function listClients(options = {}) {
+  return request("/api/v1/clients", { signal: options.signal });
+}
+
+/**
  * Estimated monthly installment/total payoff, computed by the backend
  * (same formula it uses for CreditResponse and the PDF export) without
  * saving anything — used for the pre-submission confirmation step.
