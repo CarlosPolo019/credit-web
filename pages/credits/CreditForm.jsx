@@ -13,7 +13,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
-import { validateCreditForm } from "../../lib/creditValidation.js";
+import { creditLimits, validateCreditForm } from "../../lib/creditValidation.js";
 import { Button } from "../../ui/Button.jsx";
 import { Input } from "../../ui/Input.jsx";
 import { CreditConfirmDialog } from "./CreditConfirmDialog.jsx";
@@ -223,7 +223,17 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
               </Stack>
               <Grid container spacing={2} className="credit-form__grid">
                 <Grid size={12}>
-                  <Input label="Valor del crédito" name="amount" type="number" value={values.amount} onChange={handleChange} error={Boolean(errors.amount)} helperText={errors.amount} required />
+                  <Input
+                    label="Valor del crédito"
+                    name="amount"
+                    type="number"
+                    value={values.amount}
+                    onChange={handleChange}
+                    error={Boolean(errors.amount)}
+                    helperText={errors.amount || `Máximo $${creditLimits.maxAmount.toLocaleString("es-CO")}`}
+                    required
+                    slotProps={{ htmlInput: { min: 0, max: creditLimits.maxAmount } }}
+                  />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <Input
@@ -233,9 +243,12 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
                     value={values.interestRate}
                     onChange={handleChange}
                     error={Boolean(errors.interestRate)}
-                    helperText={errors.interestRate}
+                    helperText={errors.interestRate || `Entre ${creditLimits.minInterestRate}% y ${creditLimits.maxInterestRate}%`}
                     required
-                    slotProps={{ input: { endAdornment: <InputAdornment position="end">%</InputAdornment> } }}
+                    slotProps={{
+                      input: { endAdornment: <InputAdornment position="end">%</InputAdornment> },
+                      htmlInput: { min: creditLimits.minInterestRate, max: creditLimits.maxInterestRate, step: 0.1 },
+                    }}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
@@ -246,9 +259,12 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
                     value={values.termMonths}
                     onChange={handleChange}
                     error={Boolean(errors.termMonths)}
-                    helperText={errors.termMonths}
+                    helperText={errors.termMonths || `Entre ${creditLimits.minTermMonths} y ${creditLimits.maxTermMonths} meses`}
                     required
-                    slotProps={{ input: { endAdornment: <InputAdornment position="end">meses</InputAdornment> } }}
+                    slotProps={{
+                      input: { endAdornment: <InputAdornment position="end">meses</InputAdornment> },
+                      htmlInput: { min: creditLimits.minTermMonths, max: creditLimits.maxTermMonths },
+                    }}
                   />
                 </Grid>
               </Grid>
