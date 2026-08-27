@@ -110,6 +110,43 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
     setErrors((previous) => ({ ...previous, [name]: "" }));
   };
 
+  // Digits-only, clamped to the max so it's impossible to end up with a
+  // value the backend would reject anyway — same idea as an input mask.
+  // Stored as plain digits (no "$"/"." formatting) so validateCreditForm
+  // and estimateCredit keep receiving exactly what they got before.
+  const handleAmountChange = (event) => {
+    const digits = event.target.value.replace(/\D/g, "");
+    const nextValue = digits === "" ? "" : String(Math.min(Number(digits), creditLimits.maxAmount));
+    setValues((previous) => ({ ...previous, amount: nextValue }));
+    setErrors((previous) => ({ ...previous, amount: "" }));
+  };
+
+  const handleTermMonthsChange = (event) => {
+    const digits = event.target.value.replace(/\D/g, "");
+    const nextValue = digits === "" ? "" : String(Math.min(Number(digits), creditLimits.maxTermMonths));
+    setValues((previous) => ({ ...previous, termMonths: nextValue }));
+    setErrors((previous) => ({ ...previous, termMonths: "" }));
+  };
+
+  const handleInterestRateChange = (event) => {
+    let cleaned = event.target.value.replace(/[^\d.]/g, "");
+    const firstDot = cleaned.indexOf(".");
+    if (firstDot !== -1) {
+      cleaned = cleaned.slice(0, firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g, "");
+    }
+    // A trailing "." (or an empty field) is a mid-typing state — don't
+    // clamp yet, or "3." would jump to "3.5" before the user can type the
+    // decimals.
+    if (cleaned !== "" && !cleaned.endsWith(".")) {
+      const numeric = Number(cleaned);
+      if (Number.isFinite(numeric) && numeric > creditLimits.maxInterestRate) {
+        cleaned = String(creditLimits.maxInterestRate);
+      }
+    }
+    setValues((previous) => ({ ...previous, interestRate: cleaned }));
+    setErrors((previous) => ({ ...previous, interestRate: "" }));
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const validation = validateCreditForm(values);
@@ -226,28 +263,27 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
                   <Input
                     label="Valor del crédito"
                     name="amount"
-                    type="number"
-                    value={values.amount}
-                    onChange={handleChange}
+                    inputMode="numeric"
+                    value={values.amount ? Number(values.amount).toLocaleString("es-CO") : ""}
+                    onChange={handleAmountChange}
                     error={Boolean(errors.amount)}
                     helperText={errors.amount || `Máximo $${creditLimits.maxAmount.toLocaleString("es-CO")}`}
                     required
-                    slotProps={{ htmlInput: { min: 0, max: creditLimits.maxAmount } }}
+                    slotProps={{ input: { startAdornment: <InputAdornment position="start">$</InputAdornment> } }}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <Input
                     label="Tasa de interés mensual"
                     name="interestRate"
-                    type="number"
+                    inputMode="decimal"
                     value={values.interestRate}
-                    onChange={handleChange}
+                    onChange={handleInterestRateChange}
                     error={Boolean(errors.interestRate)}
                     helperText={errors.interestRate || `Entre ${creditLimits.minInterestRate}% y ${creditLimits.maxInterestRate}%`}
                     required
                     slotProps={{
                       input: { endAdornment: <InputAdornment position="end">%</InputAdornment> },
-                      htmlInput: { min: creditLimits.minInterestRate, max: creditLimits.maxInterestRate, step: 0.1 },
                     }}
                   />
                 </Grid>
@@ -255,15 +291,14 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
                   <Input
                     label="Plazo"
                     name="termMonths"
-                    type="number"
+                    inputMode="numeric"
                     value={values.termMonths}
-                    onChange={handleChange}
+                    onChange={handleTermMonthsChange}
                     error={Boolean(errors.termMonths)}
                     helperText={errors.termMonths || `Entre ${creditLimits.minTermMonths} y ${creditLimits.maxTermMonths} meses`}
                     required
                     slotProps={{
                       input: { endAdornment: <InputAdornment position="end">meses</InputAdornment> },
-                      htmlInput: { min: creditLimits.minTermMonths, max: creditLimits.maxTermMonths },
                     }}
                   />
                 </Grid>
