@@ -26,6 +26,8 @@ Keep credit workflows aligned with the backend contract.
 - Supported directions are `asc` and `desc`.
 - Frontend validation improves UX; backend remains authoritative.
 - Listing should keep debounce, `AbortController`, and request id protection against stale responses.
+- Listing is paginated client-side (`DataTable`'s `totalCount`/`page`/`pageCount`/`onPageChange`) — 10/page on desktop, 5/page on the 800px mobile-card breakpoint. Changing a filter or the sort resets to page 1.
+- Create mode's cédula field is a MUI `Autocomplete` (`freeSolo`) over `GET /api/v1/clients` (`listClients()`), filtered locally by document. A match autofills and disables the 4 name fields (read-only, no edit from this flow); no match behaves like a plain text field. Edit mode has no autocomplete. The backend upserts `clients` on every create/update regardless of which path was used — never build a separate write for that on the frontend.
 
 ## Files
 - `pages/credits/CreditsPage.jsx`
@@ -38,4 +40,4 @@ Keep credit workflows aligned with the backend contract.
 - `lib/creditValidation.js`
 
 ## Docs
-Update `pages/credits/README.md` and `document/api.md` when behavior changes.
+Update `pages/credits/README.md` and `document/api.md` when behavior changes. The client autocomplete also touches `pages/clients/README.md` (same `listClients()` data source) if it changes.

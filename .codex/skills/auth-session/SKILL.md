@@ -20,14 +20,16 @@ Preserve the web authentication contract.
 - JWT is stored only in `localStorage` (not `sessionStorage`), so a link opened in a new tab — e.g. the "ver detalle completo" button in the credit-registered email — reuses the already-authenticated session.
 - `401` clears session through the auth-expired event.
 - The API client reads the initial token from `auth.storage.js` before React effects run.
-- `/credits`, `/credits/:id`, and `/email-jobs` remain protected by `ProtectedRoute`.
+- `/credits` and `/credits/:id` are protected by `ProtectedRoute`. `/email-jobs` and `/clients` are also wrapped in `AdminRoute` — they need `state.user.role === "ADMIN"`, not just an authenticated session; any other role gets redirected to `/credits`.
 - `ProtectedRoute` captures the originally-requested location; `LoginPage` redirects there after a successful login instead of always going to `/credits`.
+- `state.user.role` (`"ADMIN"` or `"USER"`) comes from the backend JWT and is persisted with the rest of the session in `localStorage` — see `document/security.md`.
 
 ## Files
 - `auth/AuthContext.jsx`
 - `auth/auth.storage.js`
 - `api/client.js`
 - `app/guards/ProtectedRoute.jsx`
+- `app/guards/AdminRoute.jsx`
 - `pages/login/LoginPage.jsx`
 
 ## Validation

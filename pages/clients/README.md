@@ -24,6 +24,7 @@
 - Empty cuando no hay clientes.
 - Error para fallas de API.
 - Filtro de texto (cedula o nombre) es 100% en el cliente — el dataset es chico, no hay filtros server-side.
+- Paginado en el cliente, 6 por pagina (`DataTable` `totalCount`/`page`/`pageCount`/`onPageChange`, mismo patron que `CreditsPage`). Escribir en el filtro vuelve a la pagina 1.
 
 ## Referencias
 - `document/module-map.md`

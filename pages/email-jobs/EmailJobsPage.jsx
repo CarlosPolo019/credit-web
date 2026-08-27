@@ -7,7 +7,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { formatCurrency, formatDate } from "../../lib/format.js";
 import { Button } from "../../ui/Button.jsx";
 import { Card } from "../../ui/Card.jsx";
@@ -37,11 +37,14 @@ function StatusChip({ status }) {
   return <Chip size="small" label={meta.label} color={meta.color} variant={meta.color === "default" ? "outlined" : "filled"} />;
 }
 
+const PAGE_SIZE = 6;
+
 export function EmailJobsPage() {
   const [filters, setFilters] = useState(defaultFilters);
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
   const latestRequestId = useRef(0);
 
   const loadJobs = useCallback(async (options = {}) => {
@@ -90,6 +93,21 @@ export function EmailJobsPage() {
       direction: previous.sortBy === sortKey && previous.direction === "desc" ? "asc" : "desc",
     }));
   };
+
+  useEffect(() => {
+    setPage(1);
+  }, [filters]);
+
+  const pageCount = Math.max(1, Math.ceil(jobs.length / PAGE_SIZE));
+  const clampedPage = Math.min(page, pageCount);
+  useEffect(() => {
+    if (page !== clampedPage) setPage(clampedPage);
+  }, [page, clampedPage]);
+
+  const pagedJobs = useMemo(
+    () => jobs.slice((clampedPage - 1) * PAGE_SIZE, clampedPage * PAGE_SIZE),
+    [jobs, clampedPage],
+  );
 
   const renderCell = (row, key) => {
     if (key === "recipient") {
@@ -164,7 +182,7 @@ export function EmailJobsPage() {
           </Grid>
           <DataTable
             columns={emailJobColumns}
-            rows={jobs}
+            rows={pagedJobs}
             getRowId={(row) => row.id}
             renderCell={renderCell}
             isLoading={isLoading}
@@ -174,6 +192,10 @@ export function EmailJobsPage() {
             sortBy={filters.sortBy}
             direction={filters.direction}
             onSortChange={handleSortChange}
+            totalCount={jobs.length}
+            page={clampedPage}
+            pageCount={pageCount}
+            onPageChange={setPage}
           />
         </Stack>
       </Card>

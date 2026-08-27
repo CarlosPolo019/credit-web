@@ -30,6 +30,7 @@
 - Empty cuando no hay correos para los filtros aplicados.
 - Error para fallas de API.
 - En mobile, la tabla se presenta como tarjetas con etiquetas por campo y mantiene los controles de ordenamiento disponibles arriba del listado.
+- Paginado en el cliente, 6 por pagina, sobre el resultado que ya devolvio el backend filtrado. Cambiar cualquier filtro u orden vuelve a la pagina 1.
 
 ## Presentacion De Errores
 - Columna "Estado" muestra un `Chip` coloreado (verde `SENT`, ambar `RETRY`, rojo `FAILED`, neutro `PENDING`/`PROCESSING`).

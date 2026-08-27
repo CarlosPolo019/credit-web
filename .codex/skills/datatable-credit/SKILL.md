@@ -20,8 +20,11 @@ Maintain the reusable table used by the credits view.
 - Loading and empty states must not shift layout unexpectedly.
 - Sort state should be visible and accessible.
 - Table remains generic enough for credit rows without backend-specific logic inside `ui/`.
+- Pagination (`totalCount`/`page`/`pageCount`/`onPageChange`) is optional and owned by the caller — `DataTable` only renders the MUI `Pagination` control when `pageCount > 1`; it never fetches or slices data itself. Also used (unpaginated columns aside) by `ClientsPage.jsx` and `EmailJobsPage.jsx`, not just credits — despite the skill's name, keep it generic.
 
 ## Files
 - `ui/DataTable.jsx`
 - `pages/credits/credits.columns.js`
 - `pages/credits/CreditsPage.jsx`
+- `pages/clients/clients.columns.js`, `pages/clients/ClientsPage.jsx`
+- `pages/email-jobs/email-jobs.columns.js`, `pages/email-jobs/EmailJobsPage.jsx`

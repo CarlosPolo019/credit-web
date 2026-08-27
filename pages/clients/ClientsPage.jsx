@@ -4,7 +4,7 @@ import Collapse from "@mui/material/Collapse";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { listClients } from "../credits/credits.service.js";
 import { Button } from "../../ui/Button.jsx";
 import { Card } from "../../ui/Card.jsx";
@@ -18,11 +18,14 @@ import { clientColumns } from "./clients.columns.js";
  * from credit registrations — there's no create/edit/delete here. Admin
  * only (see app/guards/AdminRoute.jsx and DashboardLayout.jsx).
  */
+const PAGE_SIZE = 6;
+
 export function ClientsPage() {
   const [clients, setClients] = useState([]);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
 
   const loadClients = useCallback(async (options = {}) => {
     setIsLoading(true);
@@ -45,11 +48,26 @@ export function ClientsPage() {
     return () => controller.abort();
   }, [loadClients]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
+
   const normalizedSearch = search.trim().toLowerCase();
   const visibleClients = normalizedSearch
     ? clients.filter((client) =>
         `${client.document} ${client.fullName}`.toLowerCase().includes(normalizedSearch))
     : clients;
+
+  const pageCount = Math.max(1, Math.ceil(visibleClients.length / PAGE_SIZE));
+  const clampedPage = Math.min(page, pageCount);
+  useEffect(() => {
+    if (page !== clampedPage) setPage(clampedPage);
+  }, [page, clampedPage]);
+
+  const pagedClients = useMemo(
+    () => visibleClients.slice((clampedPage - 1) * PAGE_SIZE, clampedPage * PAGE_SIZE),
+    [visibleClients, clampedPage],
+  );
 
   const renderCell = (row, key) => {
     if (key === "fullName") return <PersonChip name={row.fullName} size={28} />;
@@ -85,13 +103,17 @@ export function ClientsPage() {
           </Grid>
           <DataTable
             columns={clientColumns}
-            rows={visibleClients}
+            rows={pagedClients}
             getRowId={(row) => row.document}
             renderCell={renderCell}
             isLoading={isLoading}
             loadingText="Cargando clientes..."
             countLabel="clientes visibles"
             emptyText="No hay clientes para mostrar."
+            totalCount={visibleClients.length}
+            page={clampedPage}
+            pageCount={pageCount}
+            onPageChange={setPage}
           />
         </Stack>
       </Card>
