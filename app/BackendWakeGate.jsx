@@ -3,14 +3,55 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 const HEALTH_CHECK_TIMEOUT_MS = 5000;
-const POLL_INTERVAL_MS = 3000;
-const MAX_WAIT_MS = 75000;
+const POLL_INTERVAL_MS = 4000;
+const MAX_WAIT_MS = 5 * 60 * 1000;
+const MESSAGE_ROTATION_MS = 4000;
 
-function messageForElapsed(elapsedMs) {
-  if (elapsedMs < 5000) return "Conectando con el servidor...";
-  if (elapsedMs < 20000) return "El servidor estaba dormido, dándole un momento para despertar...";
-  if (elapsedMs < 45000) return "Ya casi...";
-  return "Un poco más de paciencia, esto puede tardar hasta un minuto la primera vez.";
+// Buckets by elapsed time (ms), each with a few messages that rotate in
+// order so the wait — up to 5 minutes on a very slow cold start — reads as
+// a story with beats instead of one static line staring back at you.
+const MESSAGE_BUCKETS = [
+  { until: 8000, messages: ["Conectando con el servidor...", "Verificando la conexión..."] },
+  {
+    until: 25000,
+    messages: [
+      "El servidor estaba dormido, dándole un empujoncito...",
+      "Encendiendo motores...",
+      "Ya se despertó, dale un momento para estar listo...",
+    ],
+  },
+  {
+    until: 70000,
+    messages: [
+      "Vamos por buen camino...",
+      "Cada segundo que pasa estamos más cerca...",
+      "El servidor se está desperezando...",
+      "Un poquito más de paciencia...",
+    ],
+  },
+  {
+    until: 150000,
+    messages: [
+      "Gracias por esperar, ya casi...",
+      "Esto no es lo normal, pero ya falta poco...",
+      "Seguimos aquí, no te vayas...",
+      "Los últimos ajustes están en camino...",
+    ],
+  },
+  {
+    until: Infinity,
+    messages: [
+      "Sabemos que es más de lo normal, gracias por tu paciencia...",
+      "Ya casi, de verdad...",
+      "Esto está por terminar...",
+      "Un último esfuerzo y estamos listos...",
+    ],
+  },
+];
+
+function messageForElapsed(elapsedMs, rotationIndex) {
+  const bucket = MESSAGE_BUCKETS.find((candidate) => elapsedMs < candidate.until) ?? MESSAGE_BUCKETS[MESSAGE_BUCKETS.length - 1];
+  return bucket.messages[rotationIndex % bucket.messages.length];
 }
 
 /**
@@ -24,6 +65,7 @@ function messageForElapsed(elapsedMs) {
 export function BackendWakeGate({ children }) {
   const [isReady, setIsReady] = useState(false);
   const [elapsedMs, setElapsedMs] = useState(0);
+  const [rotationIndex, setRotationIndex] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,10 +101,14 @@ export function BackendWakeGate({ children }) {
     const tickTimer = setInterval(() => {
       if (!cancelled) setElapsedMs(Date.now() - startedAt);
     }, 1000);
+    const rotationTimer = setInterval(() => {
+      if (!cancelled) setRotationIndex((index) => index + 1);
+    }, MESSAGE_ROTATION_MS);
 
     return () => {
       cancelled = true;
       clearInterval(tickTimer);
+      clearInterval(rotationTimer);
     };
   }, []);
 
@@ -78,7 +124,7 @@ export function BackendWakeGate({ children }) {
         Despertando el servidor
       </Typography>
       <Typography variant="body2" sx={{ color: "text.secondary", minHeight: 24 }}>
-        {messageForElapsed(elapsedMs)}
+        {messageForElapsed(elapsedMs, rotationIndex)}
       </Typography>
       <Box className="backend-wake__bar">
         <Box className="backend-wake__bar-fill" />
