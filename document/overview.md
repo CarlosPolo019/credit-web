@@ -24,6 +24,7 @@ flowchart LR
 - `ui/`: componentes reutilizables.
 - `pages/login/`: vista publica de ingreso.
 - `pages/credits/`: vista protegida de registro y consulta.
+- `pages/clients/`: directorio de solo lectura, protegido + solo `role: "ADMIN"`.
 
 ## Invariantes
 - No hay acceso directo a Firestore.

@@ -8,7 +8,13 @@
 
 ## Rutas
 - `/login`: pública.
-- `/credits`, `/credits/:id`, `/email-jobs`: protegidas por `ProtectedRoute`. Al redirigir a `/login` se guarda la ruta original para volver ahí después de autenticar.
+- `/credits`, `/credits/:id`: protegidas por `ProtectedRoute`. Al redirigir a `/login` se guarda la ruta original para volver ahí después de autenticar.
+- `/email-jobs`, `/clients`: protegidas por `ProtectedRoute` **y** `AdminRoute` (`app/guards/AdminRoute.jsx`) — solo `state.user.role === "ADMIN"`. Cualquier otra cuenta autenticada que entre por URL directa es redirigida a `/credits`, sin mensaje de error (no es un intento de acceso hostil esperado, solo navegación fuera de su alcance).
+
+## Roles
+- `state.user.role` viene del backend (`AppUser.role`, viaja en el JWT) — `"ADMIN"` o `"USER"`. Hoy solo la cuenta `900100001` (Carlos Escorcia) es `ADMIN`; el resto (incluyendo cuentas nuevas por `/register`) son `USER`.
+- El rol solo restringe Correos y Clientes (oculto en `DashboardLayout`, bloqueado por `AdminRoute`). Crear/editar/eliminar créditos es igual para todas las cuentas — no hay distinción de rol ahí.
+- El frontend oculta/redirige por rol, pero **no es el control real**: `/api/v1/email-jobs/**` también exige `ADMIN` en el backend (`SecurityConfig.hasRole("ADMIN")`, 403 JSON si no) — llamar la API directo con un token de cuenta `USER` falla igual. `/api/v1/clients` no exige rol en el backend a propósito: lo usa el autocomplete del formulario de créditos, que usan todas las cuentas.
 
 ## Reglas
 - No guardar passwords ni secretos en frontend.

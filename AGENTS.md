@@ -5,10 +5,10 @@ Guia operativa para agentes que trabajen en `credit-web`.
 ## Mapa Rapido
 - Stack: React 18, Vite, JavaScript, MUI, React Router.
 - SPA sin `src`; la app vive en `main.jsx`, `app/`, `auth/`, `api/`, `lib/`, `ui/`, `pages/`.
-- Rutas: `/login` publica; `/credits`, `/credits/:id` y `/email-jobs` protegidas por `ProtectedRoute`.
+- Rutas: `/login` publica; `/credits`, `/credits/:id` protegidas por `ProtectedRoute`; `/email-jobs` y `/clients` protegidas por `ProtectedRoute` + `AdminRoute` (solo `role: "ADMIN"`, hoy unicamente `900100001`).
 - API: solo REST contra Spring Boot mediante `api/client.js`.
-- Sesion: JWT en `localStorage` (necesario para que enlaces abiertos en pestaña nueva, como el del correo de crédito, reutilicen la sesión), limpieza en logout y en `401`.
-- Dominio activo: registro y consulta de creditos.
+- Sesion: JWT en `localStorage` (necesario para que enlaces abiertos en pestaña nueva, como el del correo de crédito, reutilicen la sesión), limpieza en logout y en `401`. `state.user.role` viaja en el JWT/sesion, controla que ve el sidebar y las rutas de admin.
+- Dominio activo: registro y consulta de creditos (con autocomplete de cliente por cedula, `GET /api/v1/clients`), directorio de clientes de solo lectura.
 
 ## Protocolo De Inicio
 1. Ejecutar `pwd` y confirmar que estas en `credit-web`.
@@ -55,6 +55,7 @@ Reglas:
 - Cambios de API cliente: actualizar `document/api.md`.
 - Cambios de sesion/auth: actualizar `document/security.md` y `pages/login/README.md`.
 - Cambios de creditos: actualizar `pages/credits/README.md`.
+- Cambios de clientes o roles/permisos: actualizar `pages/clients/README.md` y `document/security.md`.
 - Cambios de despliegue/env: actualizar `README.md`, `.env.example` y `document/deployment.md`.
 - Cambios en skills: actualizar `.codex/skills/**/SKILL.md` y `document/agents/commit-guide.md` si afecta el flujo de agentes.
 

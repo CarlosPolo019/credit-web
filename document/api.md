@@ -23,7 +23,8 @@ La primera carga autenticada lee el token directamente desde `auth.storage.js`; 
 - `DELETE /api/v1/credits/{id}`
 - `GET /api/v1/credits/{id}/audit`
 - `GET /api/v1/credits/{id}/pdf`
-- `GET /api/v1/email-jobs`
+- `GET /api/v1/clients`
+- `GET /api/v1/email-jobs` (requiere `role: "ADMIN"` en el backend — `403` si no)
 
 ## Crear Credito
 El formulario envia:
@@ -58,6 +59,9 @@ Campos enviados:
 
 El backend aplica la fecha oficial, filtros normalizados y exclusiones de inactivos.
 La vista de creditos usa debounce, `AbortController` y request id para evitar que respuestas antiguas pisen resultados recientes.
+
+## Cliente Por Cedula (Autocomplete)
+`CreditForm.jsx` (modo `create`) llama `listClients()` (`GET /api/v1/clients`) una vez al abrir el formulario y filtra localmente por cedula mientras se tipea (MUI `Autocomplete` `freeSolo`, `createFilterOptions({ stringify: (c) => c.document })`). Si matchea, autocompleta y deshabilita los 4 campos de nombre; si no, se comportan como siempre (editables, vacios). `ClientsPage.jsx` (`/clients`) consume el mismo `listClients()` para el directorio de solo lectura.
 
 ## Query De Email Jobs
 Campos enviados:
