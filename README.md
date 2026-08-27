@@ -50,13 +50,21 @@ sequenceDiagram
   participant Form as CreditForm
   participant Confirm as CreditConfirmDialog
   participant API as credit-backend
-  User->>Form: Completa cédula, nombre, valor, tasa, plazo
+  Form->>API: GET /api/v1/clients (al abrir el formulario)
+  API-->>Form: listado completo de clientes
+  User->>Form: Escribe la cédula (autocomplete filtra localmente)
+  alt cédula ya existe
+    Form->>Form: autocompleta el nombre, campos quedan solo lectura
+  else cédula nueva
+    User->>Form: Completa nombre, valor, tasa, plazo
+  end
   Form->>Form: valida (sin pedir Comercial: viene de la sesión)
   Form->>API: POST /api/v1/credits/estimate
   API-->>Form: cuota y total estimados
   Form->>Confirm: abre resumen + estimación (recibida del backend)
   User->>Confirm: Confirmar y registrar
   Confirm->>API: POST /api/v1/credits (Bearer JWT)
+  API->>API: sincroniza el cliente en clients (upsert)
   API-->>Confirm: 201 CreditResponse
   Confirm-->>User: éxito, tabla se actualiza
 ```
@@ -125,6 +133,26 @@ Solo necesario si querés correr la app en tu máquina en vez de usar la [demo e
 | `/credits/:id` | Detalle de un crédito: editar, eliminar y exportar a PDF | [`pages/credits/README.md`](pages/credits/README.md) |
 | `/email-jobs` | Ver el estado de entrega de notificaciones, errores visibles al toque — **solo `role: "ADMIN"`** | [`pages/email-jobs/README.md`](pages/email-jobs/README.md) |
 | `/clients` | Directorio de solo lectura (cédula + nombre) — **solo `role: "ADMIN"`** | [`pages/clients/README.md`](pages/clients/README.md) |
+
+## Roles Y Permisos
+
+Cada usuario tiene un `role` (`ADMIN` o `USER`) que viaja en el JWT desde `credit-backend`. Hoy solo distingue quién ve Correos y Clientes — **crear/editar/eliminar créditos es igual para todas las cuentas**, el rol no toca eso.
+
+| Rol | Cuenta(s) | Qué ve de más |
+|---|---|---|
+| `ADMIN` | `900100001` (Carlos Escorcia) — única cuenta seed con este rol | `/email-jobs` y `/clients`, además de todo lo que ve `USER` |
+| `USER` | Todas las demás (Jennifer, Adriana, cuentas nuevas por `/register` del backend, usuario demo) | `/credits` y `/credits/:id` únicamente |
+
+Cómo funciona, de punta a punta:
+1. `credit-backend` guarda `role` en `AppUser` (Firestore, colección `users`) y lo mete como claim en el JWT al hacer login (`JwtService.createToken`).
+2. `JwtAuthenticationFilter` lee ese claim y le da al request la autoridad `ROLE_<role>` de Spring Security.
+3. `SecurityConfig` exige `ROLE_ADMIN` para `/api/v1/email-jobs/**` — si una cuenta `USER` llama ese endpoint (aunque sea directo con `curl`, sin pasar por la UI), el backend responde `403 {"status":403,"code":"FORBIDDEN",...}`. `/api/v1/clients` no tiene esa restricción a propósito: lo usa el autocomplete del formulario de créditos, que usan todas las cuentas.
+4. En `credit-web`, `state.user.role` (guardado en `localStorage` junto al resto de la sesión) decide dos cosas: `DashboardLayout` oculta los links de Correos/Clientes en el sidebar si no es `ADMIN`, y `AdminRoute` (envuelve esas dos rutas en `router.jsx`) redirige a `/credits` si alguien entra por URL directa sin el rol.
+
+Cómo probarlo vos mismo (con la demo en vivo):
+1. Login con `900100001` / `demo12345` (Carlos) → el sidebar muestra Créditos, Correos y Clientes.
+2. Login con `900100002` / `demo12345` (Jennifer) → el sidebar solo muestra Créditos; entrar a `https://fyatest.cmescorcia.com/email-jobs` a mano redirige solo a `/credits`.
+3. Con el token de Jennifer, `curl -H "Authorization: Bearer <token>" https://fyatest-api.cmescorcia.com/api/v1/email-jobs` devuelve `403` — la restricción es real en el backend, no solo cosmética en la UI.
 
 ## Test Y Build
 

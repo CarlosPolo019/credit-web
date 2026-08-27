@@ -10,8 +10,8 @@
 
 ## Ruta Y Acceso
 - Ruta: `/email-jobs`
-- Acceso: `ProtectedRoute`.
-- Sidebar: layout privado, item "Correos".
+- Acceso: `ProtectedRoute` + `AdminRoute` (`app/guards/AdminRoute.jsx`) — solo `state.user.role === "ADMIN"`. Cualquier otra cuenta que entre por URL directa es redirigida a `/credits`.
+- Sidebar: layout privado, item "Correos", solo visible para `ADMIN`.
 
 ## Fuente De Verdad
 - Vista: `EmailJobsPage.jsx`
@@ -21,8 +21,9 @@
 - Avatar de cliente: `ui/PersonAvatar.jsx`
 
 ## Permisos
-- Requiere `Authorization: Bearer <token>`.
-- No hay distincion de rol; cualquier usuario autenticado puede consultarla, igual que `/credits`.
+- Requiere `Authorization: Bearer <token>` **y** rol `ADMIN` — a diferencia de `/credits`, que es igual para todas las cuentas.
+- El backend tambien lo exige (`SecurityConfig.hasRole("ADMIN")` sobre `/api/v1/email-jobs/**`): llamar el endpoint directo con el token de una cuenta `USER` devuelve `403`, no solo la UI lo oculta.
+- Hoy la unica cuenta `ADMIN` es `900100001` (Carlos Escorcia) — ver `document/security.md`.
 
 ## Estados
 - Loading en consulta.
