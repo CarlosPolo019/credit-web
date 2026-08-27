@@ -9,6 +9,7 @@ import Collapse from "@mui/material/Collapse";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Bar,
@@ -125,6 +126,9 @@ function StatCard({ icon, iconColor, label, value, tooltip, caption }) {
  * backend endpoint.
  */
 export function DashboardPage() {
+  // Recharts sizes are pixel props, not CSS — they need a JS breakpoint to
+  // actually shrink on narrow screens instead of just clipping/overflowing.
+  const isCompact = useMediaQuery("(max-width:600px)");
   const [credits, setCredits] = useState([]);
   const [emailJobs, setEmailJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -279,10 +283,19 @@ export function DashboardPage() {
               ) : (
                 <Box sx={{ width: "100%", height: chartHeight }}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={creditsBySalesperson} layout="vertical" margin={{ left: 24, right: 40 }}>
+                    <BarChart
+                      data={creditsBySalesperson}
+                      layout="vertical"
+                      margin={isCompact ? { left: 8, right: 28 } : { left: 24, right: 40 }}
+                    >
                       <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                      <XAxis type="number" allowDecimals={false} />
-                      <YAxis type="category" dataKey="name" width={160} />
+                      <XAxis type="number" allowDecimals={false} tick={{ fontSize: isCompact ? 11 : 12 }} />
+                      <YAxis
+                        type="category"
+                        dataKey="name"
+                        width={isCompact ? 92 : 160}
+                        tick={{ fontSize: isCompact ? 11 : 13 }}
+                      />
                       <RechartsTooltip formatter={(value) => [value, "Créditos"]} />
                       <Bar dataKey="count" name="Créditos" radius={[0, 4, 4, 0]}>
                         {creditsBySalesperson.map((entry, index) => (
@@ -306,7 +319,7 @@ export function DashboardPage() {
               {emailJobsByStatus.length === 0 ? (
                 <Typography variant="body2" className="muted">No hay correos para mostrar.</Typography>
               ) : (
-                <Box sx={{ width: "100%", height: 320 }}>
+                <Box sx={{ width: "100%", height: isCompact ? 280 : 320 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
@@ -315,8 +328,8 @@ export function DashboardPage() {
                         nameKey="label"
                         cx="50%"
                         cy="50%"
-                        innerRadius={70}
-                        outerRadius={110}
+                        innerRadius={isCompact ? 55 : 70}
+                        outerRadius={isCompact ? 85 : 110}
                         paddingAngle={2}
                       >
                         {emailJobsByStatus.map((entry) => (
@@ -327,7 +340,7 @@ export function DashboardPage() {
                             const { cx, cy } = viewBox;
                             return (
                               <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
-                                <tspan x={cx} dy="-0.3em" fontSize="28" fontWeight="800" fill="#052224">
+                                <tspan x={cx} dy="-0.3em" fontSize={isCompact ? 22 : 28} fontWeight="800" fill="#052224">
                                   {totalEmailJobs}
                                 </tspan>
                                 <tspan x={cx} dy="1.5em" fontSize="12" fill="#6b7280">
@@ -339,7 +352,7 @@ export function DashboardPage() {
                         />
                       </Pie>
                       <RechartsTooltip formatter={(value, _name, entry) => [value, entry.payload.label]} />
-                      <Legend />
+                      <Legend wrapperStyle={{ fontSize: isCompact ? 11 : 12 }} />
                     </PieChart>
                   </ResponsiveContainer>
                 </Box>
