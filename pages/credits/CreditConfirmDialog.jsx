@@ -5,7 +5,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import MuiButton from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { estimateCreditPayment } from "../../lib/creditPayment.js";
 import { formatCurrency } from "../../lib/format.js";
 import { Button } from "../../ui/Button.jsx";
 
@@ -26,14 +25,13 @@ function SummaryRow({ label, value, emphasis }) {
  * typo (an extra zero on the amount, the wrong term) gets caught here
  * instead of after the client has already been notified by email.
  */
-export function CreditConfirmDialog({ open, credit, salespersonLabel, onCancel, onConfirm, isSubmitting, mode = "create" }) {
+export function CreditConfirmDialog({ open, credit, monthlyPayment, totalToPay, salespersonLabel, onCancel, onConfirm, isSubmitting, mode = "create" }) {
   if (!credit) return null;
   const isEdit = mode === "edit";
 
   const fullName = [credit.clientFirstName, credit.clientSecondName, credit.clientFirstSurname, credit.clientSecondSurname]
     .filter(Boolean)
     .join(" ");
-  const { monthlyPayment, totalToPay } = estimateCreditPayment(credit);
 
   return (
     <Dialog open={open} onClose={onCancel} fullWidth maxWidth="xs" className="credit-form-dialog">

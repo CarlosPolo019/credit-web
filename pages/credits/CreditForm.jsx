@@ -16,6 +16,7 @@ import { validateCreditForm } from "../../lib/creditValidation.js";
 import { Button } from "../../ui/Button.jsx";
 import { Input } from "../../ui/Input.jsx";
 import { CreditConfirmDialog } from "./CreditConfirmDialog.jsx";
+import { estimateCredit } from "./credits.service.js";
 
 const initialValues = {
   clientFirstName: "",
@@ -37,6 +38,9 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
   // Holds the validated payload while the operator reviews the confirmation
   // step; null means "no confirmation pending", not "empty form".
   const [pendingCredit, setPendingCredit] = useState(null);
+  const [estimate, setEstimate] = useState(null);
+  const [isEstimating, setIsEstimating] = useState(false);
+  const [estimateError, setEstimateError] = useState("");
   const salespersonLabel = currentUser?.fullName || currentUser?.document || currentUser?.username || "";
 
   const handleChange = (event) => {
@@ -46,14 +50,24 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
     setErrors((previous) => ({ ...previous, [name]: "" }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const validation = validateCreditForm(values);
     if (!validation.isValid) {
       setErrors(validation.errors);
       return;
     }
-    setPendingCredit(validation.value);
+    setEstimateError("");
+    setIsEstimating(true);
+    try {
+      const response = await estimateCredit(validation.value);
+      setEstimate(response);
+      setPendingCredit(validation.value);
+    } catch (err) {
+      setEstimateError(err.message || "No se pudo calcular la cuota estimada.");
+    } finally {
+      setIsEstimating(false);
+    }
   };
 
   const handleConfirm = async () => {
@@ -155,15 +169,15 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
         </form>
       </DialogContent>
 
-      <Collapse in={Boolean(error)} unmountOnExit>
-        <div className="form-error credit-form__error">{error}</div>
+      <Collapse in={Boolean(error || estimateError)} unmountOnExit>
+        <div className="form-error credit-form__error">{error || estimateError}</div>
       </Collapse>
 
       <DialogActions className="credit-form__actions">
         <MuiButton onClick={onCancel} color="inherit">
           Cancelar
         </MuiButton>
-        <Button type="submit" form={FORM_ID}>
+        <Button type="submit" form={FORM_ID} loading={isEstimating} loadingText="Calculando...">
           {isEdit ? "Guardar cambios" : "Registrar crédito"}
         </Button>
       </DialogActions>
@@ -171,6 +185,8 @@ export function CreditForm({ currentUser, onSubmit, onCancel, isSubmitting, erro
       <CreditConfirmDialog
         open={Boolean(pendingCredit)}
         credit={pendingCredit}
+        monthlyPayment={estimate?.monthlyPayment}
+        totalToPay={estimate?.totalToPay}
         salespersonLabel={salespersonLabel}
         onCancel={() => setPendingCredit(null)}
         onConfirm={handleConfirm}

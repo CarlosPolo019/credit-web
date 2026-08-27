@@ -16,15 +16,13 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { estimateCreditPayment } from "../../lib/creditPayment.js";
 import { formatCurrency, formatDate } from "../../lib/format.js";
 import { Card } from "../../ui/Card.jsx";
 import { PersonChip } from "../../ui/PersonAvatar.jsx";
 import { CreditAuditHistory } from "./CreditAuditHistory.jsx";
 import { CreditForm } from "./CreditForm.jsx";
 import { DeleteCreditDialog } from "./DeleteCreditDialog.jsx";
-import { deleteCredit, getCredit, getCreditAudit, updateCredit } from "./credits.service.js";
-import { exportCreditPdf } from "./creditPdf.js";
+import { deleteCredit, downloadCreditPdf, getCredit, getCreditAudit, updateCredit } from "./credits.service.js";
 
 function clientDisplayName(credit) {
   const derivedName = [
@@ -160,7 +158,7 @@ export function CreditDetailPage() {
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      await exportCreditPdf(credit);
+      await downloadCreditPdf(id);
     } finally {
       setIsExporting(false);
     }
@@ -187,7 +185,8 @@ export function CreditDetailPage() {
 
   if (!credit) return null;
 
-  const { monthlyPayment, totalToPay } = estimateCreditPayment(credit);
+  const monthlyPayment = credit.estimatedMonthlyPayment;
+  const totalToPay = credit.estimatedTotalToPay;
 
   return (
     <Stack spacing={3} className="credits-page">

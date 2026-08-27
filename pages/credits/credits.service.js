@@ -1,10 +1,22 @@
-import { request } from "../../api/client.js";
+import { request, requestBlob } from "../../api/client.js";
 import { normalizeDirection, normalizeSort } from "../../lib/creditValidation.js";
 
 export async function createCredit(payload) {
   return request("/api/v1/credits", {
     method: "POST",
     body: payload,
+  });
+}
+
+/**
+ * Estimated monthly installment/total payoff, computed by the backend
+ * (same formula it uses for CreditResponse and the PDF export) without
+ * saving anything — used for the pre-submission confirmation step.
+ */
+export async function estimateCredit({ amount, interestRate, termMonths }) {
+  return request("/api/v1/credits/estimate", {
+    method: "POST",
+    body: { amount, interestRate, termMonths },
   });
 }
 
@@ -37,4 +49,21 @@ export async function deleteCredit(id) {
 
 export async function getCreditAudit(id, options = {}) {
   return request(`/api/v1/credits/${id}/audit`, { signal: options.signal });
+}
+
+/**
+ * Downloads the credit's PDF certificate — rendered server-side by
+ * credit-backend (same endpoint credit-mobile uses), so there's a single
+ * implementation of the PDF layout instead of a duplicate client-side one.
+ */
+export async function downloadCreditPdf(id) {
+  const blob = await requestBlob(`/api/v1/credits/${id}/pdf`);
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `credito-${id}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 }

@@ -23,7 +23,7 @@
 - Vista detalle: `CreditDetailPage.jsx`
 - Formulario (crear y editar): `CreditForm.jsx`
 - Confirmacion: `CreditConfirmDialog.jsx`
-- Exportacion PDF: `creditPdf.js` (jsPDF, un solo archivo)
+- Exportacion PDF: descarga `GET /api/v1/credits/{id}/pdf` (generado en `credit-backend`, mismo endpoint que usa `credit-mobile`)
 - Servicio: `credits.service.js`
 - Columnas: `credits.columns.js`
 - Tabla: `ui/DataTable.jsx`
@@ -40,8 +40,8 @@
 - En mobile, el listado reutiliza la misma fuente de datos pero presenta cada fila como tarjeta con etiquetas por campo y controles de ordenamiento visibles arriba de las tarjetas.
 
 ## Confirmacion De Registro
-- Al enviar el formulario no se llama a la API directamente: se valida y se abre `CreditConfirmDialog.jsx` con un resumen (cliente, cedula, comercial, valor, tasa, plazo) y una cuota/total estimados (`lib/creditPayment.js`, amortizacion francesa con tasa mensual).
-- El calculo es solo informativo para el operador; el backend no lo recibe ni lo almacena.
+- Al enviar el formulario no se crea el credito directamente: se valida localmente, se pide la cuota/total estimados a `POST /api/v1/credits/estimate` (mismo calculo que usa el backend para `CreditResponse` y el PDF — no hay formula duplicada en el frontend), y se abre `CreditConfirmDialog.jsx` con un resumen (cliente, cedula, comercial, valor, tasa, plazo, cuota/total).
+- El calculo es solo informativo para el operador; `POST /credits/estimate` no guarda nada.
 - El operador puede "Revisar datos" (vuelve al formulario sin perder lo escrito) o "Confirmar y registrar" (dispara el `POST /api/v1/credits` real).
 
 ## Validaciones
@@ -54,7 +54,7 @@
 - La columna "Opciones" de la tabla (`CreditsPage.jsx`) da acceso directo a ver, editar y eliminar. Ver y editar navegan al detalle pasando el registro seleccionado en `location.state`; eliminar se confirma desde el listado.
 - "Editar" abre `CreditForm.jsx` en modo `edit` dentro del detalle (mismo formulario y confirmacion que el registro, con copy ajustado) y guarda con `PUT /api/v1/credits/{id}`. El comercial original no cambia.
 - "Eliminar" pide confirmacion en `DeleteCreditDialog.jsx` (compartido entre listado y detalle) y llama a `DELETE /api/v1/credits/{id}`.
-- "Exportar PDF" (solo en el detalle) genera un certificado de una pagina con el mismo estilo de marca (verde `#00d280`, tinta `#052224`, logo) via `creditPdf.js` (jsPDF), 100% en el cliente.
+- "Exportar PDF" (solo en el detalle) descarga el certificado que genera `credit-backend` (mismo estilo de marca, mismo endpoint que usa `credit-mobile`) — no hay generacion de PDF en el cliente.
 - El detalle tambien muestra "Historial de cambios" (`CreditAuditHistory.jsx`, `GET /api/v1/credits/{id}/audit`): quien edito o elimino el credito, cuando, y que campos cambiaron (antes/despues). Se recarga despues de cada edicion.
 - Los dialogos de crear/editar pasan a pantalla completa en telefonos para evitar campos comprimidos; en escritorio conservan el modal centrado.
 

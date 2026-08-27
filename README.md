@@ -78,7 +78,7 @@ sequenceDiagram
 | UI | React 18.3.1, MUI |
 | Build | Vite |
 | Ruteo | React Router |
-| PDF | jsPDF (generado 100% en el cliente, sin backend) |
+| PDF | Generado en `credit-backend` (`GET /credits/{id}/pdf`), mismo endpoint que usa `credit-mobile`; la web solo descarga el archivo |
 | Lenguaje | Solo JavaScript (sin TypeScript, sin paso de compilación de tipos) |
 
 ## Instalación Local

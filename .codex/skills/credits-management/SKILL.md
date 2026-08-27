@@ -20,7 +20,8 @@ Keep credit workflows aligned with the backend contract.
 - List uses `GET /api/v1/credits`.
 - Detail uses `GET /api/v1/credits/{id}`; edit uses `PUT /api/v1/credits/{id}` (same `CreditForm.jsx`, edit mode); delete uses `DELETE /api/v1/credits/{id}` (`DeleteCreditDialog.jsx`, shared by the list row actions and the detail page).
 - Audit history uses `GET /api/v1/credits/{id}/audit`.
-- PDF export (`creditPdf.js`) runs entirely client-side via jsPDF; it never calls the backend.
+- PDF export downloads `GET /api/v1/credits/{id}/pdf` — the PDF is rendered server-side (same endpoint credit-mobile uses); the frontend never generates one.
+- The estimated monthly payment/total (confirmation dialog and detail page) comes from the backend (`POST /credits/estimate` before saving, `CreditResponse.estimatedMonthlyPayment`/`estimatedTotalToPay` after) — never recompute it client-side.
 - Supported sort fields are `createdAt` and `amount`.
 - Supported directions are `asc` and `desc`.
 - Frontend validation improves UX; backend remains authoritative.
@@ -32,7 +33,6 @@ Keep credit workflows aligned with the backend contract.
 - `pages/credits/CreditForm.jsx`
 - `pages/credits/DeleteCreditDialog.jsx`
 - `pages/credits/CreditAuditHistory.jsx`
-- `pages/credits/creditPdf.js`
 - `pages/credits/credits.columns.js`
 - `pages/credits/credits.service.js`
 - `lib/creditValidation.js`

@@ -44,3 +44,23 @@ export async function request(path, options = {}) {
   }
   return payload;
 }
+
+/**
+ * Like `request`, but for binary responses (e.g. the PDF export) — returns
+ * the raw Blob instead of trying to parse JSON.
+ */
+export async function requestBlob(path) {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
+  const token = tokenProvider();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+  const response = await fetch(`${baseUrl}${path}`, { headers });
+
+  if (response.status === 401) {
+    window.dispatchEvent(new Event("credit-auth-expired"));
+  }
+  if (!response.ok) {
+    throw new Error("No se pudo completar la solicitud.");
+  }
+  return response.blob();
+}

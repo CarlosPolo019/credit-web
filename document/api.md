@@ -16,11 +16,13 @@ La primera carga autenticada lee el token directamente desde `auth.storage.js`; 
 ## Endpoints Usados
 - `POST /api/v1/auth/login`
 - `POST /api/v1/credits`
+- `POST /api/v1/credits/estimate`
 - `GET /api/v1/credits`
 - `GET /api/v1/credits/{id}`
 - `PUT /api/v1/credits/{id}`
 - `DELETE /api/v1/credits/{id}`
 - `GET /api/v1/credits/{id}/audit`
+- `GET /api/v1/credits/{id}/pdf`
 - `GET /api/v1/email-jobs`
 
 ## Crear Credito
@@ -37,6 +39,11 @@ El formulario envia:
 El backend toma el comercial desde el JWT y la coleccion `users`; el formulario no envia `salespersonName`.
 
 `CreditDetailPage.jsx` reusa el mismo formulario en modo edicion y envia el mismo body a `PUT /api/v1/credits/{id}` para actualizar cliente y condiciones (el comercial original no cambia).
+
+## Cuota Estimada Y PDF
+Antes de confirmar un registro o una edicion, `CreditForm.jsx` pide la cuota mensual y el total estimados a `POST /api/v1/credits/estimate` (mismo body que crear, sin `client*`) — no hay formula de amortizacion en el frontend. Una vez guardado, `CreditResponse` ya trae `estimatedMonthlyPayment`/`estimatedTotalToPay`, que es lo que muestra `CreditDetailPage.jsx`.
+
+"Exportar PDF" descarga `GET /api/v1/credits/{id}/pdf` (`credits.service.js#downloadCreditPdf`) como blob autenticado y dispara la descarga en el navegador; el PDF en si lo genera `credit-backend` (mismo endpoint que usa `credit-mobile`), no hay generacion de PDF en el cliente.
 
 ## Historial De Cambios (Auditoria)
 `CreditAuditHistory.jsx` consume `GET /api/v1/credits/{id}/audit` y muestra, por cada edicion o borrado: quien lo hizo, cuando, y para ediciones el detalle campo por campo (`before`/`after`). Se recarga automaticamente despues de guardar una edicion desde el detalle.
