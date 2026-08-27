@@ -27,9 +27,9 @@ Este repo es uno de los tres entregables independientes de la prueba técnica de
 
 | Repo | Rol | README |
 |---|---|---|
-| `credit-backend` | API REST, Firestore, JWT, worker de correo | [`../credit-backend/README.md`](../credit-backend/README.md) |
+| `credit-backend` | API REST, Firestore, JWT, worker de correo | [github.com/CarlosPolo019/credit-backend](https://github.com/CarlosPolo019/credit-backend) |
 | `credit-web` (este repo) | Panel administrativo para registrar/consultar créditos y monitorear correos | — |
-| `credit-mobile` | App Android para el comercial en campo | [`../credit-mobile/README.md`](../credit-mobile/README.md) |
+| `credit-mobile` | App Android para el comercial en campo | [github.com/CarlosPolo019/credit-mobile](https://github.com/CarlosPolo019/credit-mobile) |
 
 ## Arquitectura
 
@@ -115,7 +115,7 @@ Solo necesario si querés correr la app en tu máquina en vez de usar la [demo e
    cp .env.example .env
    ```
 3. **Elegí contra qué backend correr:**
-   - Contra tu propio backend local (ver [`../credit-backend/README.md`](../credit-backend/README.md)): dejá el valor por defecto, `VITE_API_BASE_URL=http://localhost:8080`.
+   - Contra tu propio backend local (ver [github.com/CarlosPolo019/credit-backend](https://github.com/CarlosPolo019/credit-backend)): dejá el valor por defecto, `VITE_API_BASE_URL=http://localhost:8080`.
    - Contra el backend de la demo ya desplegado (sin instalar nada más): poné `VITE_API_BASE_URL=https://fyatest-api.cmescorcia.com` en el `.env`.
 4. **Levantá el dev server:**
    ```bash
