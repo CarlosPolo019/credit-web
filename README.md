@@ -62,9 +62,9 @@ Este repo es uno de los tres entregables independientes de la prueba técnica de
 
 ```mermaid
 flowchart LR
-  web["credit-web · React admin"] -->|REST + JWT| api["credit-backend · Spring Boot"]
-  mobile["credit-mobile · React Native"] -->|REST + JWT| api
-  api --> firestore[("Cloud Firestore")]
+  WEB[credit-web] --> API[credit-backend]
+  MOBILE[credit-mobile] --> API
+  API --> DB[Cloud Firestore]
 ```
 
 `credit-web` nunca habla con Firestore directamente — todo pasa por `credit-backend`. `credit-mobile` es la contraparte para el comercial en campo de este panel administrativo.
@@ -73,27 +73,27 @@ flowchart LR
 
 ```mermaid
 sequenceDiagram
-  participant User as Operador
-  participant Form as CreditForm
-  participant Confirm as CreditConfirmDialog
-  participant API as credit-backend
-  Form->>API: GET /api/v1/clients (al abrir el formulario)
-  API-->>Form: listado completo de clientes
-  User->>Form: Escribe la cédula (autocomplete filtra localmente)
-  alt cédula ya existe
-    Form->>Form: autocompleta el nombre, campos quedan solo lectura
-  else cédula nueva
-    User->>Form: Completa nombre, valor, tasa, plazo
+  participant User
+  participant Form
+  participant Confirm
+  participant API
+  Form->>API: GET clients
+  API-->>Form: Return clients
+  User->>Form: Type client document
+  alt Existing client
+    Form->>Form: Fill client name
+  else New client
+    User->>Form: Fill credit data
   end
-  Form->>Form: valida (sin pedir Comercial: viene de la sesión)
-  Form->>API: POST /api/v1/credits/estimate
-  API-->>Form: cuota y total estimados
-  Form->>Confirm: abre resumen + estimación (recibida del backend)
-  User->>Confirm: Confirmar y registrar
-  Confirm->>API: POST /api/v1/credits (Bearer JWT)
-  API->>API: sincroniza el cliente en clients (upsert)
-  API-->>Confirm: 201 CreditResponse
-  Confirm-->>User: éxito, tabla se actualiza
+  Form->>Form: Validate data
+  Form->>API: POST credit estimate
+  API-->>Form: Return estimate
+  Form->>Confirm: Open confirmation dialog
+  User->>Confirm: Confirm credit
+  Confirm->>API: POST credit with JWT
+  API->>API: Upsert client
+  API-->>Confirm: Return 201 response
+  Confirm-->>User: Refresh table
 ```
 
 ## Stack
@@ -175,9 +175,10 @@ Producción corre en Vercel bajo el dominio propio `https://fyatest.cmescorcia.c
 
 ```mermaid
 flowchart LR
-  dev["git push main"] --> ci["Web CI (valida, no despliega)"]
-  operator["Run workflow (manual)"] --> deploy["Deploy Web"]
-  deploy -->|vercel deploy --prod| prod["fyatest.cmescorcia.com"]
+  PUSH[git push main] --> CI[Web CI]
+  RUN[Run workflow] --> DEPLOY[Deploy Web]
+  DEPLOY --> VERCEL[Vercel production deploy]
+  VERCEL --> PROD[Production Web]
 ```
 
 Para desplegar: GitHub → **Actions** → **Deploy Web** → **Run workflow**, o desde la terminal (requiere `gh` autenticado) con `npm run deploy` (`npm run deploy:status` para ver el resultado). Detalles (secrets, dominio/DNS, `vercel.json`): [`document/deployment.md`](document/deployment.md).
