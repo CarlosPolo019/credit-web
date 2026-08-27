@@ -28,3 +28,10 @@ flowchart LR
 - El token se guarda en `localStorage` y se elimina al recibir `401`.
 - La app es JavaScript-only.
 
+## Interaccion
+- Transiciones de ruta con `Fade` (`DashboardLayout.jsx`, key por `location.pathname`).
+- Filas de tabla con aparicion escalonada vía CSS (`ui/DataTable.jsx` fija `--row-delay` por fila, `index.css` aplica la animacion) y fade-out al eliminar una fila.
+- Banners de error/exito colapsables con `Collapse` en vez de aparecer/desaparecer de golpe.
+- El hero de valor del credito en el detalle usa `Grow` al montar.
+- Todas las animaciones respetan `prefers-reduced-motion` (`index.css`).
+
