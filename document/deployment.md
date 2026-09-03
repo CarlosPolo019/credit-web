@@ -4,7 +4,7 @@
 El deploy a produccion **no es automatico**. El workflow `.github/workflows/deploy-web.yml` corre solo con `workflow_dispatch` (boton manual):
 1. GitHub -> pestaña **Actions** -> workflow **Deploy Web** -> **Run workflow** -> rama `main` -> Run.
 2. Corre lint, tests y build primero; si algo falla, no despliega.
-3. Si pasa, hace `npx vercel@59.11.2 deploy --prod --yes` con los secrets del repo (CLI pineado; el job tiene `timeout-minutes: 15` y cache npm).
+3. Si pasa, hace `npx --yes vercel@59.11.2 deploy --prod --yes` con los secrets del repo (`npx --yes` evita el prompt/fetch silencioso de npx; `vercel --yes` es el CLI; el job tiene `timeout-minutes: 15` y cache npm).
 
 El deploy automatico de Vercel por push a Git tambien esta apagado (Vercel -> Settings -> Git -> **Ignored Build Step** configurado para saltar siempre `main`). Asi, nada se despliega a produccion sin que alguien lo dispare a mano desde GitHub.
 

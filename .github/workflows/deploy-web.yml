@@ -30,6 +30,6 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        # Pin the CLI and pass --yes so npx does not sit silent fetching a
-        # floating latest (2026-09-03 hang). --prebuilt is a follow-up.
-        run: npx vercel@59.11.2 deploy --prod --yes --token "$VERCEL_TOKEN"
+        # npx --yes skips npx's install prompt / silent fetch (2026-09-03 hang).
+        # vercel --yes is the CLI. --prebuilt is a follow-up.
+        run: npx --yes vercel@59.11.2 deploy --prod --yes --token "$VERCEL_TOKEN"
