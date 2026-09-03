@@ -15,14 +15,17 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext.jsx";
 import { formatCurrency, formatDate } from "../../lib/format.js";
+import { normalizeDirection, normalizeSort } from "../../lib/creditValidation.js";
 import { Button } from "../../ui/Button.jsx";
 import { Card } from "../../ui/Card.jsx";
 import { DataTable } from "../../ui/DataTable.jsx";
+import { EmptyState } from "../../ui/EmptyState.jsx";
 import { Input } from "../../ui/Input.jsx";
 import { PersonChip } from "../../ui/PersonAvatar.jsx";
+import { PortraitEmptyCredits, PortraitEmptySearch } from "../../ui/illustrations/portraits.jsx";
 import { creditColumns } from "./credits.columns.js";
 import { createCredit, deleteCredit, listCredits } from "./credits.service.js";
 import { CreditForm } from "./CreditForm.jsx";
@@ -46,9 +49,30 @@ function clientDisplayName(row) {
   return row.clientName || derivedName || "-";
 }
 
+function filtersFromSearchParams(searchParams) {
+  const keys = ["clientName", "clientDocument", "salesperson", "sortBy", "direction"];
+  if (!keys.some((key) => searchParams.has(key))) return null;
+  return {
+    clientName: searchParams.get("clientName") ?? "",
+    clientDocument: (searchParams.get("clientDocument") ?? "").replace(/\D/g, ""),
+    salesperson: searchParams.get("salesperson") ?? "",
+    sortBy: normalizeSort(searchParams.get("sortBy")),
+    direction: normalizeDirection(searchParams.get("direction")),
+  };
+}
+
+function sameFilters(left, right) {
+  return left.clientName === right.clientName
+    && left.clientDocument === right.clientDocument
+    && left.salesperson === right.salesperson
+    && left.sortBy === right.sortBy
+    && left.direction === right.direction;
+}
+
 export function CreditsPage() {
   const { state } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const theme = useTheme();
   const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
   // Matches the 800px breakpoint where DataTable switches from a table to
@@ -68,6 +92,19 @@ export function CreditsPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const latestRequestId = useRef(0);
+
+  useEffect(() => {
+    const fromUrl = filtersFromSearchParams(searchParams);
+    if (fromUrl) {
+      setFilters((previous) => (sameFilters(previous, fromUrl) ? previous : fromUrl));
+    }
+    if (searchParams.get("nuevo") === "1") {
+      setIsFormOpen(true);
+      const next = new URLSearchParams(searchParams);
+      next.delete("nuevo");
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const loadCredits = useCallback(async (options = {}) => {
     const requestId = latestRequestId.current + 1;
@@ -219,7 +256,7 @@ export function CreditsPage() {
       <Box className="page-title page-title--with-action">
         <Box>
           <Typography variant="overline" className="section-badge">Créditos</Typography>
-          <Typography variant="h4">Registro y <span className="text-accent">consulta</span></Typography>
+          <Typography variant="h4">Registro y consulta</Typography>
         </Box>
         <Button onClick={() => setIsFormOpen(true)} startIcon={<AddOutlinedIcon />}>
           Registrar crédito
@@ -307,6 +344,16 @@ export function CreditsPage() {
             page={clampedPage}
             pageCount={pageCount}
             onPageChange={setPage}
+            emptyContent={(
+              <EmptyState figure={filters.clientName || filters.clientDocument || filters.salesperson
+                ? <PortraitEmptySearch size={120} />
+                : <PortraitEmptyCredits size={120} />}
+              >
+                {filters.clientName || filters.clientDocument || filters.salesperson
+                  ? "No hay créditos con esos filtros."
+                  : "Todavía no hay créditos activos."}
+              </EmptyState>
+            )}
           />
         </Stack>
       </Card>

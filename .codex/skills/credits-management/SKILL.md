@@ -38,6 +38,7 @@ Keep credit workflows aligned with the backend contract.
 - `pages/credits/credits.columns.js`
 - `pages/credits/credits.service.js`
 - `lib/creditValidation.js`
+- `pages/assistant/assistant.engine.js` (estimate/list/deep-links into this flow)
 
 ## Docs
 Update `pages/credits/README.md` and `document/api.md` when behavior changes. The client autocomplete also touches `pages/clients/README.md` (same `listClients()` data source) if it changes.

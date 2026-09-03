@@ -30,7 +30,7 @@ Credenciales de prueba:
 | `900100002` | `demo12345` | Jennifer Navarro |
 | `900100003` | `demo12345` | Adriana Castellano |
 
-Con cualquiera de esos usuarios podés registrar un crédito (la cédula tiene autocomplete: si ya existe, el nombre se completa solo) con confirmación y cuota estimada, consultar/filtrar/editar/eliminar la tabla de créditos (paginada, 10 por página en escritorio y 5 en mobile), y entrar al detalle de uno (`/credits/:id`) para exportarlo a PDF. Con la cuenta de Carlos Escorcia además se ve `/dashboard` (estadísticas agregadas), `/email-jobs` (estado de notificaciones), `/clients` (directorio de clientes) y `/users` (crear cuentas de prueba) — el resto de las cuentas no las ve. Para correrlo en tu máquina en vez de usar la demo: [Instalación Local](#instalación-local).
+Después del login, un copiloto a la derecha enseña los límites y puede estimar una cuota con la API real (primera sesión: tres notas y se oculta). Con cualquiera de esos usuarios podés registrar un crédito (la cédula tiene autocomplete: si ya existe, el nombre se completa solo) con confirmación y cuota estimada, consultar/filtrar/editar/eliminar la tabla de créditos (paginada, 10 por página en escritorio y 5 en mobile), y entrar al detalle de uno (`/credits/:id`) para exportarlo a PDF. Con la cuenta de Carlos Escorcia además se ve `/dashboard` (estadísticas agregadas), `/email-jobs` (estado de notificaciones), `/clients` (directorio de clientes) y `/users` (crear cuentas de prueba) — el resto de las cuentas no las ve. Para correrlo en tu máquina en vez de usar la demo: [Instalación Local](#instalación-local).
 
 > **¿La API tarda en responder la primera vez?** El backend corre en el plan gratuito de Render y puede entrar en reposo por inactividad. La web lo detecta sola y muestra una pantalla de "despertando el servidor" (con el logo animado) mientras reintenta — no hace falta refrescar.
 
@@ -150,6 +150,7 @@ Solo necesario si querés correr la app en tu máquina en vez de usar la [demo e
 | `/email-jobs` | Ver el estado de entrega de notificaciones, errores visibles al toque — **solo `role: "ADMIN"`** | [`pages/email-jobs/README.md`](pages/email-jobs/README.md) |
 | `/clients` | Directorio de solo lectura (cédula + nombre) — **solo `role: "ADMIN"`** | [`pages/clients/README.md`](pages/clients/README.md) |
 | `/users` | Crear cuentas `USER` de prueba (comerciales) — **solo `role: "ADMIN"`** | [`pages/users/README.md`](pages/users/README.md) |
+| shell | Copiloto (Lesson Dock): enseña límites, estima cuota y navega — sin LLM | [`pages/assistant/README.md`](pages/assistant/README.md) |
 
 ## Roles Y Permisos
 

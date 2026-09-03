@@ -16,6 +16,7 @@
 - Sidebar: layout privado.
 - Cada fila de la tabla navega a `/credits/:id` pasando el credito en `location.state` para pintar el detalle sin repetir `GET /credits/{id}`.
 - La accion "Editar" navega a `/credits/:id?edit=1` con el mismo `location.state` y abre el formulario desde el detalle. Si se entra directo por URL, refresh o enlace de correo, el detalle hace el `GET /credits/{id}` como fallback.
+- El copiloto puede abrir el formulario con `/credits?nuevo=1` y aplicar filtros via query (`clientName`, `clientDocument`, `salesperson`, `sortBy`, `direction`).
 - El correo de "nuevo credito registrado" tambien enlaza a `/credits/:id`.
 
 ## Fuente De Verdad
@@ -34,7 +35,7 @@
 
 ## Estados
 - Loading en consulta.
-- Empty cuando no hay registros.
+- Empty cuando no hay registros: un retrato SVG + una frase (`ui/EmptyState.jsx`).
 - Error para fallas de API (se muestra en la pagina y, si el modal de registro esta abierto, tambien dentro del modal).
 - Success al registrar credito.
 - En mobile, el listado reutiliza la misma fuente de datos pero presenta cada fila como tarjeta con etiquetas por campo y controles de ordenamiento visibles arriba de las tarjetas.

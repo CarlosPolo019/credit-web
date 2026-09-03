@@ -49,6 +49,14 @@ Antes de confirmar un registro o una edicion, `CreditForm.jsx` pide la cuota men
 ## Historial De Cambios (Auditoria)
 `CreditAuditHistory.jsx` consume `GET /api/v1/credits/{id}/audit` y muestra, por cada edicion o borrado: quien lo hizo, cuando, y para ediciones el detalle campo por campo (`before`/`after`). Se recarga automaticamente despues de guardar una edicion desde el detalle.
 
+## Copiloto
+El Lesson Dock no agrega endpoints. Reusa:
+- `POST /api/v1/credits/estimate` (solo `amount`, `interestRate`, `termMonths`)
+- `GET /api/v1/credits` (filtros + `sortBy`/`direction` allowlist)
+- Navegacion local a `/credits`, `/credits/:id`, `/credits?nuevo=1` y rutas admin si `role === "ADMIN"`
+
+`/credits?nuevo=1` abre el formulario de registro. `clientName`, `clientDocument`, `salesperson`, `sortBy` y `direction` en la query aplican los filtros del listado.
+
 ## Query De Creditos
 Campos enviados:
 - `clientName`

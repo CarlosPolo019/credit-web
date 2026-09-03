@@ -42,11 +42,11 @@ const EMAIL_JOB_FETCH_PARAMS = { sortBy: "createdAt", direction: "desc" };
 // statuses get muted/warm tones so "successful vs. not" reads at a glance
 // without introducing off-brand hues.
 const STATUS_META = {
-  SENT: { label: "Enviado", color: "#00d280" },
+  SENT: { label: "Enviado", color: "#052224" },
   FAILED: { label: "Fallido", color: "#dc2626" },
-  RETRY: { label: "Reintentando", color: "#f59e0b" },
-  PROCESSING: { label: "Procesando", color: "#6b7280" },
-  PENDING: { label: "Pendiente", color: "#9ca3af" },
+  RETRY: { label: "Reintentando", color: "rgba(5, 34, 36, 0.45)" },
+  PROCESSING: { label: "Procesando", color: "rgba(5, 34, 36, 0.32)" },
+  PENDING: { label: "Pendiente", color: "#D7EDE3" },
 };
 const STATUS_ORDER = ["SENT", "FAILED", "RETRY", "PROCESSING", "PENDING"];
 
@@ -197,7 +197,7 @@ export function DashboardPage() {
     <Stack spacing={3} className="credits-page">
       <Box className="page-title">
         <Typography variant="overline" className="section-badge">Panel</Typography>
-        <Typography variant="h4">Dashboard de <span className="text-accent">créditos</span></Typography>
+        <Typography variant="h4">Dashboard de créditos</Typography>
         <Typography variant="body2" className="muted">
           Estadísticas agregadas de créditos activos y estado de envío de correos.
         </Typography>
@@ -229,7 +229,7 @@ export function DashboardPage() {
             <Box sx={{ minWidth: 0 }}>
               <StatCard
                 icon={<AccountBalanceWalletOutlinedIcon fontSize="small" />}
-                iconColor="#049a5f"
+                iconColor="#052224"
                 label="Monto solicitado"
                 value={compactCurrencyFormatter.format(totalRequestedAmount)}
                 tooltip={formatCurrency(totalRequestedAmount)}
@@ -239,7 +239,7 @@ export function DashboardPage() {
             <Box sx={{ minWidth: 0 }}>
               <StatCard
                 icon={<TrendingUpOutlinedIcon fontSize="small" />}
-                iconColor="#00d280"
+                iconColor="#052224"
                 label="Ganancia estimada"
                 value={compactCurrencyFormatter.format(totalEstimatedProfit)}
                 tooltip={formatCurrency(totalEstimatedProfit)}
@@ -249,7 +249,7 @@ export function DashboardPage() {
             <Box sx={{ minWidth: 0 }}>
               <StatCard
                 icon={<PercentOutlinedIcon fontSize="small" />}
-                iconColor="#f59e0b"
+                iconColor="#052224"
                 label="Tasa promedio"
                 value={`${averageInterestRate.toLocaleString("es-CO", { maximumFractionDigits: 2 })}%`}
                 caption="Mensual, entre todos los créditos"
@@ -269,10 +269,10 @@ export function DashboardPage() {
                     direction="row"
                     spacing={0.75}
                     alignItems="center"
-                    sx={{ backgroundColor: "#fef3c7", borderRadius: "999px", px: 1.5, py: 0.5, alignSelf: { xs: "flex-start", sm: "center" } }}
+                    sx={{ backgroundColor: "#D7EDE3", borderRadius: "999px", px: 1.5, py: 0.5, alignSelf: { xs: "flex-start", sm: "center" } }}
                   >
-                    <EmojiEventsOutlinedIcon fontSize="small" sx={{ color: "#b45309" }} />
-                    <Typography variant="body2" fontWeight={700} sx={{ color: "#92400e" }}>
+                    <EmojiEventsOutlinedIcon fontSize="small" sx={{ color: "#052224" }} />
+                    <Typography variant="body2" fontWeight={700} sx={{ color: "#052224" }}>
                       Líder: {topSalesperson.name} ({topSalesperson.count})
                     </Typography>
                   </Stack>
@@ -299,7 +299,7 @@ export function DashboardPage() {
                       <RechartsTooltip formatter={(value) => [value, "Créditos"]} />
                       <Bar dataKey="count" name="Créditos" radius={[0, 4, 4, 0]}>
                         {creditsBySalesperson.map((entry, index) => (
-                          <Cell key={entry.name} fill={index === 0 ? "#049a5f" : "#5ee6ae"} />
+                          <Cell key={entry.name} fill={index === 0 ? "#052224" : "#D7EDE3"} />
                         ))}
                         <LabelList dataKey="count" position="right" style={{ fontWeight: 700, fill: "#052224" }} />
                       </Bar>

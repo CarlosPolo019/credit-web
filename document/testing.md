@@ -15,6 +15,7 @@ find . -path './node_modules' -prune -o -path './dist' -prune -o -name '*.ts' -o
 
 ## Cobertura Esperada
 - Validacion de formulario de creditos.
+- Parseo de intenciones del copiloto (estimate/list/navigate, sin `/auth/register`).
 - Login y persistencia de token.
 - Limpieza de sesion por `401`.
 - Registro de credito.

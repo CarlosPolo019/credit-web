@@ -14,6 +14,7 @@
 
 ## Fuente De Verdad
 - UI: `LoginPage.jsx`
+- Retrato: `ui/illustrations/portraits.jsx` (`PortraitLogin`) — un solo retrato quieto, paleta papel/tinta/salvia.
 - Estado: `auth/AuthContext.jsx`
 - Storage: `auth/auth.storage.js`
 - API: `api/client.js`

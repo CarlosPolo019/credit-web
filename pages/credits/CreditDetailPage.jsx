@@ -18,7 +18,9 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { formatCurrency, formatDate } from "../../lib/format.js";
 import { Card } from "../../ui/Card.jsx";
+import { EmptyState } from "../../ui/EmptyState.jsx";
 import { PersonChip } from "../../ui/PersonAvatar.jsx";
+import { PortraitEmptySearch } from "../../ui/illustrations/portraits.jsx";
 import { CreditAuditHistory } from "./CreditAuditHistory.jsx";
 import { CreditForm } from "./CreditForm.jsx";
 import { DeleteCreditDialog } from "./DeleteCreditDialog.jsx";
@@ -175,6 +177,9 @@ export function CreditDetailPage() {
   if (error && !credit) {
     return (
       <Stack spacing={2}>
+        <EmptyState figure={<PortraitEmptySearch size={120} />}>
+          No se pudo cargar este crédito.
+        </EmptyState>
         <div className="alert alert--error">{error}</div>
         <MuiButton component={Link} to="/credits" startIcon={<ArrowBackIcon />} color="inherit" sx={{ width: "fit-content" }}>
           Volver a créditos
@@ -202,8 +207,8 @@ export function CreditDetailPage() {
                 label={credit.isActive === false ? "Inactivo" : "Activo"}
                 size="small"
                 sx={{
-                  bgcolor: credit.isActive === false ? "#fef2f2" : "rgba(0,210,128,0.12)",
-                  color: credit.isActive === false ? "#dc2626" : "#047857",
+                  bgcolor: credit.isActive === false ? "#fef2f2" : "#D7EDE3",
+                  color: credit.isActive === false ? "#dc2626" : "#052224",
                   fontWeight: 700,
                 }}
               />
@@ -233,7 +238,7 @@ export function CreditDetailPage() {
           <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={2}>
             <Stack spacing={0.5}>
               <Typography variant="caption" className="muted credit-detail__label">Valor del crédito</Typography>
-              <Typography variant="h3" className="text-accent" fontWeight={800}>{formatCurrency(credit.amount)}</Typography>
+              <Typography variant="h3" fontWeight={800}>{formatCurrency(credit.amount)}</Typography>
             </Stack>
             <PersonChip name={credit.salespersonName} secondaryText="Comercial" size={40} />
           </Stack>

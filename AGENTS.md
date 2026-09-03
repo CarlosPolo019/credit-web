@@ -9,6 +9,7 @@ Guia operativa para agentes que trabajen en `credit-web`.
 - API: solo REST contra Spring Boot mediante `api/client.js`.
 - Sesion: JWT en `localStorage` (necesario para que enlaces abiertos en pestaña nueva, como el del correo de crédito, reutilicen la sesión), limpieza en logout y en `401`. `state.user.role` viaja en el JWT/sesion, controla que ve el sidebar y las rutas de admin.
 - Dominio activo: registro y consulta de creditos (con autocomplete de cliente por cedula, `GET /api/v1/clients`); admin-only: dashboard de estadisticas agregadas (`/dashboard`), estado de notificaciones por correo (`/email-jobs`), directorio de clientes de solo lectura (`/clients`) y creacion de cuentas de prueba (`/users`, `POST /api/v1/users` — no hay auto-registro publico).
+- Lesson Dock: columna derecha de ensenanza en `DashboardLayout` (`pages/assistant/`). Parsea intenciones en JS y llama `credits.service.js`. Sin LLM. Verde Fya solo en acciones primarias.
 
 ## Protocolo De Inicio
 1. Ejecutar `pwd` y confirmar que estas en `credit-web`.
@@ -58,6 +59,7 @@ Reglas:
 - Cambios de clientes o roles/permisos: actualizar `pages/clients/README.md` y `document/security.md`.
 - Cambios de creación de usuarios/comerciales de prueba: actualizar `pages/users/README.md` y `document/security.md`.
 - Cambios del dashboard agregado: actualizar `pages/dashboard/README.md`, `document/module-map.md` y `document/security.md`.
+- Cambios del copiloto / Lesson Dock: actualizar `pages/assistant/README.md`, `document/overview.md`, `document/module-map.md`, `document/api.md` y `document/security.md`.
 - Cambios de despliegue/env: actualizar `README.md`, `.env.example` y `document/deployment.md`.
 - Cambios en skills: actualizar `.codex/skills/**/SKILL.md` y `document/agents/commit-guide.md` si afecta el flujo de agentes.
 
