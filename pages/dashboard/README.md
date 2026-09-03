@@ -23,7 +23,7 @@
 - **Creditos por comercial**: agrupa `credits` por `salespersonName` y cuenta cuantos hay en cada grupo, ordenado descendente por cantidad. Se muestra como barras horizontales (una por comercial).
 - **Monto total solicitado**: `sum(credit.amount)` sobre todos los creditos activos. Stat card unico, sin desglose por comercial (a proposito — el desglose por comercial solo aplica al conteo de creditos).
 - **Ganancia total estimada**: `sum(credit.estimatedTotalToPay - credit.amount)` sobre todos los creditos activos — `estimatedTotalToPay` ya viene calculado por el backend (misma formula que usa `CreditResponse` y el PDF), esta vista no recalcula intereses/amortizacion. Stat card unico, tambien sin desglose por comercial.
-- **Correos por estado**: agrupa `emailJobs` por `status` (`PENDING`, `PROCESSING`, `SENT`, `RETRY`, `FAILED`) y cuenta cada uno. Donut chart con `SENT` en verde primario (`#00d280`) y `FAILED` en rojo de error (`#dc2626`) para que "exitosos vs. resto" se note a simple vista; `RETRY`/`PROCESSING`/`PENDING` usan tonos ambar/gris neutros, todos dentro de la paleta de `ui/theme.js`.
+- **Correos por estado**: agrupa `emailJobs` por `status` (`PENDING`, `PROCESSING`, `SENT`, `RETRY`, `FAILED`) y cuenta cada uno. Donut con `SENT` en tinta (`#052224`) y `FAILED` en rojo de error (`#dc2626`); el resto usa salvia / tinta atenuada. El verde Fya queda reservado a acciones primarias.
 - `AbortController` por fetch, mismo patron de cancelacion-al-desmontar que `CreditsPage`/`ClientsPage`; `latestRequestId` evita pisar el estado con una respuesta vieja si el usuario navega rapido.
 
 ## Estados

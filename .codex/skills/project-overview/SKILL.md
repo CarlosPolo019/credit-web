@@ -19,6 +19,7 @@ Guide changes in the `credit-web` React/Vite SPA.
 - JavaScript-only: do not create `.ts` or `.tsx`.
 - Runtime folders are `main.jsx`, `app/`, `auth/`, `api/`, `lib/`, `ui/`, `pages/`.
 - The web client talks only to the Spring Boot REST API.
+- The Lesson Dock copiloto lives in `DashboardLayout` and reuses `credits.service.js`.
 - `document/module-map.md` is the canonical module inventory.
 
 ## Workflow

@@ -28,12 +28,20 @@ flowchart LR
 - `pages/clients/`: directorio de solo lectura, protegido + solo `role: "ADMIN"`.
 - `pages/users/`: crear cuentas `USER`/`ADMIN` de prueba, protegido + solo `role: "ADMIN"`.
 - `pages/dashboard/`: estadisticas agregadas (creditos por comercial, montos, correos por estado), protegido + solo `role: "ADMIN"`.
+- `pages/assistant/`: copiloto de ensenanza (Lesson Dock) montado en `DashboardLayout`, sin ruta propia.
+- `ui/illustrations/`: retratos SVG (papel/tinta/salvia) para login, vacios y avatar del dock.
 
 ## Invariantes
 - No hay acceso directo a Firestore.
 - La autenticacion depende del backend.
 - El token se guarda en `localStorage` y se elimina al recibir `401`.
 - La app es JavaScript-only.
+
+## Lesson Dock
+- Shell autenticado: sidebar | pagina | columna derecha del copiloto.
+- Paleta: papel `#F6F7F5`, tinta `#052224`, salvia `#D7EDE3`, verde Fya `#00d280` solo en acciones primarias.
+- El copiloto parsea intenciones en JS y llama `credits.service.js` (estimate/list). Sin LLM, sin endpoint de chat.
+- Primera sesion: tres notas y se oculta. Despues queda a un clic en el header.
 
 ## Interaccion
 - Transiciones de ruta con `Fade` (`DashboardLayout.jsx`, key por `location.pathname`).
