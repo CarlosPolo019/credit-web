@@ -22,6 +22,7 @@ export function DataTable({
   renderCell,
   isLoading,
   emptyText = "No hay registros para mostrar.",
+  emptyContent,
   loadingText = "Cargando créditos...",
   countLabel = "créditos visibles",
   sortBy,
@@ -51,7 +52,7 @@ export function DataTable({
     return (
       <Fade in appear timeout={200}>
         <Box className="table-state">
-          <Typography variant="body2">{emptyText}</Typography>
+          {emptyContent ?? <Typography variant="body2">{emptyText}</Typography>}
         </Box>
       </Fade>
     );

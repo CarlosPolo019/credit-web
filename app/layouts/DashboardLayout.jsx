@@ -6,23 +6,47 @@ import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import GroupAddOutlinedIcon from "@mui/icons-material/GroupAddOutlined";
 import InsightsOutlinedIcon from "@mui/icons-material/InsightsOutlined";
 import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
 import Fade from "@mui/material/Fade";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { AssistantDock } from "../../pages/assistant/AssistantDock.jsx";
+import { assistantCopy } from "../../pages/assistant/assistant.copy.js";
+import { markLessonBeatsSeen, readLessonBeatsSeen } from "../../pages/assistant/assistant.storage.js";
 import { useAuth } from "../../auth/AuthContext.jsx";
+import { Button } from "../../ui/Button.jsx";
 import { PersonChip } from "../../ui/PersonAvatar.jsx";
 
 export function DashboardLayout() {
   const { state, logout } = useAuth();
   const location = useLocation();
+  const isCompact = useMediaQuery("(max-width: 1100px)");
   const salespersonName = state.user?.fullName || "Usuario";
   const isAdmin = state.user?.role === "ADMIN";
+  const [beatsSeen, setBeatsSeen] = useState(readLessonBeatsSeen);
+  const [assistantOpen, setAssistantOpen] = useState(() => !readLessonBeatsSeen());
+
+  const hushAssistant = () => {
+    markLessonBeatsSeen();
+    setBeatsSeen(true);
+    setAssistantOpen(false);
+  };
+
+  const dock = (
+    <AssistantDock
+      isAdmin={isAdmin}
+      showLesson={!beatsSeen}
+      onHush={hushAssistant}
+    />
+  );
 
   return (
-    <div className="layout">
+    <div className={`layout${assistantOpen && !isCompact ? " layout--with-assistant" : ""}`}>
       <aside className="sidebar">
         <Box className="sidebar__brand">
           <span className="sidebar__mark">
@@ -63,14 +87,24 @@ export function DashboardLayout() {
       <section className="layout__content">
         <header className="layout__header">
           <Stack direction="row" spacing={1.25} alignItems="center">
-            <AccountBalanceWalletOutlinedIcon color="primary" />
+            <AccountBalanceWalletOutlinedIcon color="secondary" />
             <Box>
               <Typography variant="overline" className="section-badge">Panel operativo</Typography>
-              <Typography variant="h6">Registro y consulta de <span className="text-accent">créditos</span></Typography>
+              <Typography variant="h6">Registro y consulta de créditos</Typography>
             </Box>
           </Stack>
           <Stack className="layout__account" direction="row" spacing={1.25} alignItems="center">
-            <PersonChip className="layout__salesperson" name={salespersonName} secondaryText="Comercial" size={36} />
+            {assistantOpen ? null : (
+              <Button variant="outlined" size="small" onClick={() => setAssistantOpen(true)}>
+                {assistantCopy.open}
+              </Button>
+            )}
+            <PersonChip
+              className="layout__salesperson"
+              name={salespersonName}
+              secondaryText={isAdmin ? "Administrador" : "Comercial"}
+              size={36}
+            />
             <Tooltip title="Cerrar sesión">
               <IconButton onClick={logout} className="layout__logout" size="small">
                 <LogoutOutlinedIcon fontSize="small" />
@@ -86,6 +120,18 @@ export function DashboardLayout() {
           </Fade>
         </main>
       </section>
+      {isCompact ? (
+        <Drawer
+          anchor="right"
+          open={assistantOpen}
+          onClose={hushAssistant}
+          PaperProps={{ className: "layout__assistant-drawer" }}
+        >
+          {dock}
+        </Drawer>
+      ) : assistantOpen ? (
+        <div className="layout__assistant">{dock}</div>
+      ) : null}
     </div>
   );
 }

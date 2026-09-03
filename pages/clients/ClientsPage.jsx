@@ -9,8 +9,10 @@ import { listClients } from "../credits/credits.service.js";
 import { Button } from "../../ui/Button.jsx";
 import { Card } from "../../ui/Card.jsx";
 import { DataTable } from "../../ui/DataTable.jsx";
+import { EmptyState } from "../../ui/EmptyState.jsx";
 import { Input } from "../../ui/Input.jsx";
 import { PersonChip } from "../../ui/PersonAvatar.jsx";
+import { PortraitEmptyClients } from "../../ui/illustrations/portraits.jsx";
 import { clientColumns } from "./clients.columns.js";
 
 /**
@@ -78,7 +80,7 @@ export function ClientsPage() {
     <Stack spacing={3} className="credits-page">
       <Box className="page-title">
         <Typography variant="overline" className="section-badge">Directorio</Typography>
-        <Typography variant="h4">Clientes <span className="text-accent">registrados</span></Typography>
+        <Typography variant="h4">Clientes registrados</Typography>
       </Box>
 
       <Collapse in={Boolean(error)} unmountOnExit>
@@ -109,7 +111,11 @@ export function ClientsPage() {
             isLoading={isLoading}
             loadingText="Cargando clientes..."
             countLabel="clientes visibles"
-            emptyText="No hay clientes para mostrar."
+            emptyContent={(
+              <EmptyState figure={<PortraitEmptyClients size={120} />}>
+                {normalizedSearch ? "No hay clientes con esa búsqueda." : "Todavía no hay clientes en el directorio."}
+              </EmptyState>
+            )}
             totalCount={visibleClients.length}
             page={clampedPage}
             pageCount={pageCount}

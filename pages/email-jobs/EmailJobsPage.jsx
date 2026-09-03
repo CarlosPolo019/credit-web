@@ -12,8 +12,10 @@ import { formatCurrency, formatDate } from "../../lib/format.js";
 import { Button } from "../../ui/Button.jsx";
 import { Card } from "../../ui/Card.jsx";
 import { DataTable } from "../../ui/DataTable.jsx";
+import { EmptyState } from "../../ui/EmptyState.jsx";
 import { Input } from "../../ui/Input.jsx";
 import { PersonChip } from "../../ui/PersonAvatar.jsx";
+import { PortraitEmptyMail } from "../../ui/illustrations/portraits.jsx";
 import { emailJobColumns } from "./email-jobs.columns.js";
 import { listEmailJobs } from "./email-jobs.service.js";
 
@@ -147,7 +149,7 @@ export function EmailJobsPage() {
     <Stack spacing={3} className="credits-page">
       <Box className="page-title">
         <Typography variant="overline" className="section-badge">Notificaciones</Typography>
-        <Typography variant="h4">Correos de <span className="text-accent">crédito</span></Typography>
+        <Typography variant="h4">Correos de crédito</Typography>
       </Box>
 
       <Collapse in={Boolean(error)} unmountOnExit>
@@ -188,7 +190,11 @@ export function EmailJobsPage() {
             isLoading={isLoading}
             loadingText="Cargando correos..."
             countLabel="correos visibles"
-            emptyText="No hay correos para mostrar."
+            emptyContent={(
+              <EmptyState figure={<PortraitEmptyMail size={120} />}>
+                {filters.search || filters.status ? "No hay correos con esos filtros." : "Todavía no hay correos de crédito."}
+              </EmptyState>
+            )}
             sortBy={filters.sortBy}
             direction={filters.direction}
             onSortChange={handleSortChange}

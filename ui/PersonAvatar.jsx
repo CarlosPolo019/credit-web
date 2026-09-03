@@ -3,10 +3,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 const PALETTE = [
-  { bg: "#00d280", color: "#052224" },
-  { bg: "#052224", color: "#ffffff" },
-  { bg: "#0d9488", color: "#ffffff" },
-  { bg: "#047857", color: "#ffffff" },
+  { bg: "#D7EDE3", color: "#052224" },
+  { bg: "#052224", color: "#F6F7F5" },
 ];
 
 const PERSON_IMAGES = {

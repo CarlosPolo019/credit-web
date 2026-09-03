@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext.jsx";
 import { Button } from "../../ui/Button.jsx";
 import { Input } from "../../ui/Input.jsx";
+import { PortraitLogin } from "../../ui/illustrations/portraits.jsx";
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -39,40 +40,45 @@ export function LoginPage() {
 
   return (
     <section className="login">
-      <form className="login__panel" onSubmit={handleSubmit}>
-        <Box className="login__brand">
-          <img src="/fya-mark.png" alt="Fya" />
-          <Typography variant="overline">Fya Social Capital</Typography>
+      <div className="login__stage">
+        <Box className="login__portrait">
+          <PortraitLogin size={280} />
         </Box>
-        <Typography variant="h4">Créditos</Typography>
-        <Typography variant="body2" className="login__copy">
-          Acceso operativo para registro y consulta.
-        </Typography>
-        <Input
-          label="Cédula"
-          name="username"
-          value={values.username}
-          onChange={handleChange}
-          autoComplete="username"
-          slotProps={{ htmlInput: { inputMode: "numeric", pattern: "[0-9]*" } }}
-          required
-        />
-        <Input
-          label="Contraseña"
-          name="password"
-          type="password"
-          value={values.password}
-          onChange={handleChange}
-          autoComplete="current-password"
-          required
-        />
-        <Collapse in={Boolean(error)} unmountOnExit>
-          <div className="form-error">{error}</div>
-        </Collapse>
-        <Button type="submit" loading={isLoading} loadingText="Ingresando...">
-          Ingresar
-        </Button>
-      </form>
+        <form className="login__panel" onSubmit={handleSubmit}>
+          <Box className="login__brand">
+            <img src="/fya-mark.png" alt="Fya" />
+            <Typography variant="overline">Fya Social Capital</Typography>
+          </Box>
+          <Typography variant="h4">Créditos</Typography>
+          <Typography variant="body2" className="login__copy">
+            Acceso operativo para registro y consulta.
+          </Typography>
+          <Input
+            label="Cédula"
+            name="username"
+            value={values.username}
+            onChange={handleChange}
+            autoComplete="username"
+            slotProps={{ htmlInput: { inputMode: "numeric", pattern: "[0-9]*" } }}
+            required
+          />
+          <Input
+            label="Contraseña"
+            name="password"
+            type="password"
+            value={values.password}
+            onChange={handleChange}
+            autoComplete="current-password"
+            required
+          />
+          <Collapse in={Boolean(error)} unmountOnExit>
+            <div className="form-error">{error}</div>
+          </Collapse>
+          <Button type="submit" loading={isLoading} loadingText="Ingresando...">
+            Ingresar
+          </Button>
+        </form>
+      </div>
     </section>
   );
 }

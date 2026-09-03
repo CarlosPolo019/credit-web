@@ -91,7 +91,7 @@ export function UsersPage() {
     <Stack spacing={3} className="credits-page">
       <Box className="page-title">
         <Typography variant="overline" className="section-badge">Cuentas</Typography>
-        <Typography variant="h4">Crear cuenta de <span className="text-accent">prueba</span></Typography>
+        <Typography variant="h4">Crear cuenta de prueba</Typography>
         <Typography variant="body2" className="muted">
           Crea cuentas `USER` para que comerciales prueben la app. No afecta tu sesión de admin.
         </Typography>
